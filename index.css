@@ -1,0 +1,18 @@
+/* Tailwind CSS는 HTML의 CDN 스크립트를 통해 로드되므로, 여기에 추가적인 글로벌 스타일을 정의할 수 있습니다. */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 스크롤바 커스텀 (필요 시) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #8B5CF6;
+  border-radius: 4px;
+}
