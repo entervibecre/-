@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { 
   Video, BarChart3, Layout, Instagram, Youtube, MessageCircle, 
   Settings, ChevronRight, X, Plus, Trash2, Edit2, Check, Download,
@@ -585,6 +585,104 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   );
 };
 
+// Global Star Background Component (Upgraded to Ultra Dense & Twinkly)
+const StarBackground: React.FC<{ springX: any; springY: any }> = ({ springX, springY }) => {
+  const layer1X = useTransform(springX, (v: number) => v * 0.15);
+  const layer1Y = useTransform(springY, (v: number) => v * 0.15);
+  const layer2X = useTransform(springX, (v: number) => v * 0.4);
+  const layer2Y = useTransform(springY, (v: number) => v * 0.4);
+  const layer3X = useTransform(springX, (v: number) => v * 1.0);
+  const layer3Y = useTransform(springY, (v: number) => v * 1.0);
+
+  // Memoize star coordinates for performance and stability
+  const individualStars = useMemo(() => {
+    return [...Array(1500)].map((_, i) => ({
+      id: i,
+      size: Math.random() * 3.5 + 0.5,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      twinkleDuration: Math.random() * 4 + 2,
+      twinkleDelay: Math.random() * 5,
+      glow: Math.random() > 0.8 // 20% of stars have extra glow
+    }));
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-black">
+      {/* Black Foundation */}
+      <div className="absolute inset-0 bg-black" />
+      
+      {/* Deep Layer (Tiny fixed stars via gradient) */}
+      <motion.div 
+        style={{ 
+          x: layer1X, 
+          y: layer1Y,
+          backgroundImage: `
+            radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)), 
+            radial-gradient(1px 1px at 40px 70px, white, rgba(0,0,0,0)), 
+            radial-gradient(1px 1px at 150px 120px, white, rgba(0,0,0,0)),
+            radial-gradient(1.2px 1.2px at 100px 100px, white, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 180px 10px, white, rgba(0,0,0,0))
+          `,
+          backgroundSize: '250px 250px'
+        }}
+        className="absolute inset-[-10%] opacity-20"
+      />
+
+      {/* Mid Layer (Mid-sized fixed stars via gradient) */}
+      <motion.div 
+        style={{ 
+          x: layer2X, 
+          y: layer2Y,
+          backgroundImage: `
+            radial-gradient(2px 2px at 150px 150px, white, rgba(0,0,0,0)), 
+            radial-gradient(1.5px 1.5px at 300px 400px, white, rgba(0,0,0,0)), 
+            radial-gradient(2px 2px at 500px 100px, white, rgba(0,0,0,0)), 
+            radial-gradient(1.8px 1.8px at 800px 200px, white, rgba(0,0,0,0))
+          `,
+          backgroundSize: '1200px 1200px'
+        }}
+        className="absolute inset-[-20%] opacity-40"
+      />
+
+      {/* Front Layer: 1500 Twinkling Individual Stars */}
+      <motion.div 
+        style={{ x: layer3X, y: layer3Y }}
+        className="absolute inset-[-30%]"
+      >
+        {individualStars.map((star) => (
+          <motion.div 
+            key={star.id}
+            animate={{ 
+              opacity: [0.1, 0.6, 0.1],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{ 
+              duration: star.twinkleDuration, 
+              repeat: Infinity, 
+              delay: star.twinkleDelay,
+              ease: "easeInOut" 
+            }}
+            className="absolute rounded-full bg-white"
+            style={{
+              width: star.size + 'px',
+              height: star.size + 'px',
+              left: star.x + '%',
+              top: star.y + '%',
+              boxShadow: star.glow ? `0 0 ${star.size * 4}px ${star.size / 2}px rgba(255, 255, 255, 0.6)` : 'none'
+            }}
+          />
+        ))}
+      </motion.div>
+
+      {/* Subtle Violet Nebula Glows */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_40%,rgba(139,92,246,0.07)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.05)_0%,transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(139,92,246,0.03)_0%,transparent_40%)]" />
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -607,8 +705,8 @@ const App: React.FC = () => {
   const handleMouseMove = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
-    const x = (clientX / innerWidth - 0.5) * 40;
-    const y = (clientY / innerHeight - 0.5) * 40;
+    const x = (clientX / innerWidth - 0.5) * 80;
+    const y = (clientY / innerHeight - 0.5) * 80;
     mouseX.set(x);
     mouseY.set(y);
   };
@@ -720,7 +818,13 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-black text-white selection:bg-violet-500 selection:text-white ${isAdminMode || isConsultationPageOpen || activeLegalView ? 'overflow-hidden h-screen' : ''}`}>
+    <div 
+      className={`min-h-screen bg-black text-white selection:bg-violet-500 selection:text-white relative ${isAdminMode || isConsultationPageOpen || activeLegalView ? 'overflow-hidden h-screen' : ''}`}
+      onMouseMove={handleMouseMove}
+    >
+      {/* Global Dynamic Starry Night Background (Fixed to cover entire page) */}
+      <StarBackground springX={springX} springY={springY} />
+
       {/* Navigation */}
       {!isAdminMode && !isConsultationPageOpen && !activeLegalView && (
         <nav className="fixed top-0 w-full z-50 glass-panel border-b border-white/5 py-4 px-6 md:px-12 flex justify-between items-center transition-all duration-500">
@@ -760,42 +864,15 @@ const App: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <main className={isAdminMode || isConsultationPageOpen || activeLegalView ? 'hidden' : 'block'}>
+      <main className={`relative z-10 ${isAdminMode || isConsultationPageOpen || activeLegalView ? 'hidden' : 'block'}`}>
         {/* Hero Section */}
         <section 
-          onMouseMove={handleMouseMove}
-          className="min-h-screen flex flex-col justify-center items-center text-center px-6 relative overflow-hidden bg-black cursor-default"
+          className="min-h-screen flex flex-col justify-center items-center text-center px-6 relative overflow-hidden bg-transparent cursor-default"
         >
-          {/* Main Dark Mesh Background (Replaced potentially confusing images) */}
-          <motion.div 
-            style={{ 
-              x: springX,
-              y: springY,
-              background: 'radial-gradient(circle at center, #111 0%, #000 100%)',
-              scale: 1.15
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.5 }}
-            className="absolute inset-0 z-0 pointer-events-none"
-          />
-          
-          {/* Dynamic Light Spot */}
-          <motion.div 
-            style={{ 
-              x: useTransform(springX, (v) => v * -1.5),
-              y: useTransform(springY, (v) => v * -1.5),
-              background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.05) 0%, transparent 70%)',
-              width: '100vw',
-              height: '100vh',
-            }}
-            className="absolute inset-0 z-[1] pointer-events-none"
-          />
-
-          {/* Gradient Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-black z-[2] pointer-events-none" />
-          <div className="absolute inset-0 z-[2] pointer-events-none" 
-               style={{ background: 'radial-gradient(circle at center, transparent 30%, black 100%)' }} />
+          {/* Gradient Overlay for Text Readability in Hero */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/20 pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" 
+               style={{ background: 'radial-gradient(circle at center, transparent 20%, black 100%)' }} />
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -855,7 +932,7 @@ const App: React.FC = () => {
         </section>
 
         {/* Solutions Section */}
-        <section id="section-0" className="py-24 md:py-32 px-6 md:px-24 bg-zinc-950 relative overflow-hidden">
+        <section id="section-0" className="py-24 md:py-32 px-6 md:px-24 bg-transparent relative overflow-hidden">
           <div className="max-w-6xl mx-auto relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 40 }}
@@ -906,7 +983,7 @@ const App: React.FC = () => {
               initial={{ opacity: 0, scale: 0.98 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="relative p-10 md:p-24 rounded-[3rem] md:rounded-[4rem] bg-gradient-to-br from-zinc-900 to-black border border-white/5 overflow-hidden"
+              className="relative p-10 md:p-24 rounded-[3rem] md:rounded-[4rem] bg-gradient-to-br from-zinc-900/50 to-black/50 backdrop-blur-sm border border-white/5 overflow-hidden"
             >
               <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_20%,rgba(139,92,246,0.1),transparent_50%)] pointer-events-none" />
               
@@ -959,7 +1036,7 @@ const App: React.FC = () => {
         </section>
 
         {/* Reference Section */}
-        <section id="section-1" className="py-24 md:py-32 bg-black overflow-hidden relative">
+        <section id="section-1" className="py-24 md:py-32 bg-transparent overflow-hidden relative">
           <div className="px-6 md:px-24 mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
             <div className="md:max-w-none text-left">
               <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter italic leading-[1.6] break-keep">레퍼런스</h2>
@@ -1000,7 +1077,7 @@ const App: React.FC = () => {
         </section>
 
         {/* Inquiry Form Section */}
-        <section id="section-2" className="py-24 md:py-32 px-6 md:px-24 bg-zinc-950 relative overflow-hidden">
+        <section id="section-2" className="py-24 md:py-32 px-6 md:px-24 bg-transparent relative overflow-hidden">
           <div className="max-w-4xl mx-auto relative z-10">
             <div className="text-center mb-16 md:mb-24">
               <span className="inline-block px-6 py-2 rounded-full bg-violet-500 text-white text-sm md:text-base font-black mb-8 tracking-widest shadow-lg shadow-violet-500/10">
@@ -1019,7 +1096,7 @@ const App: React.FC = () => {
         </section>
 
         {/* Footer */}
-        <footer className="py-16 md:py-24 border-t border-white/5 px-6 md:px-24 bg-black text-center">
+        <footer className="py-16 md:py-24 border-t border-white/5 px-6 md:px-24 bg-transparent text-center relative z-10">
           <div className="text-2xl md:text-3xl font-black mb-10 tracking-tighter text-violet-500 opacity-40 leading-[1.6] break-keep">
             {settings.agencyName}
           </div>
