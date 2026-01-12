@@ -41,49 +41,49 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onSubmit, buttonText }) => {
     <form onSubmit={handleSubmit} className="space-y-10">
       <div className="grid md:grid-cols-2 gap-10">
         <div className="space-y-4">
-          <label className="text-base font-black text-gray-500 uppercase tracking-widest leading-[1.6]">성함 / 업체명</label>
+          <label className="text-base font-black text-gray-400 uppercase tracking-widest leading-[1.6]">성함 / 업체명</label>
           <input 
             required
             name="name"
             value={form.name}
             onChange={e => setForm({...form, name: e.target.value})}
-            className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all focus:bg-white/10 font-bold"
+            className="w-full bg-zinc-950 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all font-bold shadow-inner"
             placeholder="예: 홍길동 팀장"
           />
         </div>
         <div className="space-y-4">
-          <label className="text-base font-black text-gray-500 uppercase tracking-widest leading-[1.6]">연락처</label>
+          <label className="text-base font-black text-gray-400 uppercase tracking-widest leading-[1.6]">연락처</label>
           <input 
             required
             name="contact"
             value={form.contact}
             onChange={e => setForm({...form, contact: e.target.value})}
-            className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all focus:bg-white/10 font-bold"
+            className="w-full bg-zinc-950 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all font-bold shadow-inner"
             placeholder="010-0000-0000"
           />
         </div>
       </div>
       <div className="space-y-4">
-        <label className="text-base font-black text-gray-500 uppercase tracking-widest leading-[1.6]">이메일 주소</label>
+        <label className="text-base font-black text-gray-400 uppercase tracking-widest leading-[1.6]">이메일 주소</label>
         <input 
           required
           name="email"
           type="email"
           value={form.email}
           onChange={e => setForm({...form, email: e.target.value})}
-          className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all focus:bg-white/10 font-bold"
+          className="w-full bg-zinc-950 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all font-bold shadow-inner"
           placeholder="contact@example.com"
         />
       </div>
       <div className="space-y-4">
-        <label className="text-base font-black text-gray-500 uppercase tracking-widest leading-[1.6]">상담 요청 내용 (필수)</label>
+        <label className="text-base font-black text-gray-400 uppercase tracking-widest leading-[1.6]">상담 요청 내용 (필수)</label>
         <textarea 
           required
           name="message"
           value={form.message}
           onChange={e => setForm({...form, message: e.target.value})}
           rows={6}
-          className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all focus:bg-white/10 font-bold leading-[2.4] break-keep"
+          className="w-full bg-zinc-950 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all font-bold leading-[2.4] break-keep shadow-inner"
           placeholder="무료 숏폼 광고 이벤트를 통해 제작하고 싶은 영상의 주제나 채널 성격 등을 적어주세요."
         />
       </div>
@@ -253,7 +253,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLogin }) => {
       <motion.div 
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="w-full max-w-lg glass-panel p-10 md:p-16 rounded-[2.5rem] md:rounded-[3rem] border border-white/10"
+        className="w-full max-w-lg glass-panel p-10 md:p-16 rounded-[3rem] md:rounded-[3rem] border border-white/10"
       >
         <div className="flex justify-between items-center mb-10">
           <h2 className="text-2xl md:text-3xl font-black flex items-center gap-4 tracking-tight leading-[1.6] break-keep"><Lock size={28} className="text-violet-500"/> 관리 시스템 로그인</h2>
@@ -261,19 +261,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLogin }) => {
         </div>
         <form onSubmit={handleSubmit} className="space-y-10">
           <div className="space-y-4">
-            <label className="text-sm font-black text-gray-500 uppercase flex items-center gap-2 tracking-widest leading-none"><User size={16}/> 아이디</label>
+            <label className="text-sm font-black text-gray-400 uppercase flex items-center gap-2 tracking-widest leading-none"><User size={16}/> 아이디</label>
             <input 
               autoFocus
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-lg font-bold focus:border-violet-500 outline-none transition-all"
+              className="w-full bg-zinc-950 border border-white/10 rounded-2xl p-5 text-lg font-bold focus:border-violet-500 outline-none transition-all"
               value={id}
               onChange={e => setId(e.target.value)}
             />
           </div>
           <div className="space-y-4">
-            <label className="text-sm font-black text-gray-500 uppercase flex items-center gap-2 tracking-widest leading-none"><Lock size={16}/> 비밀번호</label>
+            <label className="text-sm font-black text-gray-400 uppercase flex items-center gap-2 tracking-widest leading-none"><Lock size={16}/> 비밀번호</label>
             <input 
               type="password"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-lg font-bold focus:border-violet-500 outline-none transition-all"
+              className="w-full bg-zinc-950 border border-white/10 rounded-2xl p-5 text-lg font-bold focus:border-violet-500 outline-none transition-all"
               value={pw}
               onChange={e => setPw(e.target.value)}
             />
@@ -372,7 +372,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                           {sol.iconName === 'Layout' && <Layout size={32} />}
                        </div>
                        <input 
-                        className="bg-transparent text-2xl md:text-3xl font-black border-b border-white/5 focus:border-violet-500 outline-none w-full py-4 transition-all"
+                        className="bg-zinc-950 text-2xl md:text-3xl font-black border-b border-white/5 focus:border-violet-500 outline-none w-full py-4 transition-all"
                         value={sol.title}
                         onChange={e => {
                           const updated = [...solutions];
@@ -382,7 +382,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                       />
                     </div>
                     <textarea 
-                      className="bg-zinc-900/50 text-gray-300 text-lg md:text-xl border-2 border-transparent focus:border-violet-500/20 outline-none w-full p-8 rounded-2xl leading-[2.4] font-medium transition-all break-keep"
+                      className="bg-zinc-950 text-gray-300 text-lg md:text-xl border border-white/10 focus:border-violet-500/50 outline-none w-full p-8 rounded-2xl leading-[2.4] font-medium transition-all break-keep"
                       value={sol.description}
                       rows={4}
                       onChange={e => {
@@ -411,7 +411,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                   <div key={ref.id} className="glass-panel p-8 md:p-10 rounded-[2.5rem] flex flex-col gap-8">
                     <div className="flex justify-between items-center">
                       <select 
-                        className="bg-zinc-800 text-base rounded-full px-6 py-3 font-black text-violet-400 outline-none border border-white/10"
+                        className="bg-zinc-900 text-base rounded-full px-6 py-3 font-black text-violet-400 outline-none border border-white/10"
                         value={ref.type}
                         onChange={e => {
                           const updated = [...references];
@@ -433,7 +433,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                       <div className="space-y-4">
                         <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">영상 제목</label>
                         <input 
-                          className="w-full bg-zinc-900 p-5 rounded-xl text-xl font-bold outline-none border border-white/5 focus:border-violet-500"
+                          className="w-full bg-zinc-950 p-5 rounded-xl text-xl font-bold outline-none border border-white/5 focus:border-violet-500"
                           placeholder="영상 제목"
                           value={ref.title}
                           onChange={e => {
@@ -446,7 +446,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                       <div className="space-y-4">
                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">영상 클릭 시 이동할 URL</label>
                          <input 
-                          className="w-full bg-zinc-900 p-5 rounded-xl text-xs outline-none border border-white/5 focus:border-violet-500 font-mono text-violet-400"
+                          className="w-full bg-zinc-950 p-5 rounded-xl text-xs outline-none border border-white/5 focus:border-violet-500 font-mono text-violet-400"
                           placeholder="예: https://www.youtube.com/watch?v=..."
                           value={ref.embedUrl}
                           onChange={e => {
@@ -459,7 +459,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                       
                       <div className="space-y-4">
                         <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">썸네일 이미지</label>
-                        <div className="relative group/thumb aspect-video rounded-2xl bg-zinc-900 border border-white/5 overflow-hidden flex flex-col items-center justify-center gap-4 transition-all hover:border-violet-500/40">
+                        <div className="relative group/thumb aspect-video rounded-2xl bg-zinc-950 border border-white/5 overflow-hidden flex flex-col items-center justify-center gap-4 transition-all hover:border-violet-500/40">
                           {ref.thumbnail ? (
                             <>
                               <img src={ref.thumbnail} className="w-full h-full object-cover opacity-60 group-hover/thumb:opacity-40 transition-opacity" alt="미리보기" />
@@ -496,40 +496,40 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
             <div className="glass-panel p-10 md:p-14 rounded-[3rem] space-y-16">
               <div className="grid md:grid-cols-2 gap-12">
                 <div className="space-y-6">
-                  <label className="text-sm font-black text-gray-500 uppercase tracking-widest leading-[1.6]">포인트 컬러</label>
+                  <label className="text-sm font-black text-gray-400 uppercase tracking-widest leading-[1.6]">포인트 컬러</label>
                   <div className="flex gap-6">
                     <input type="color" className="w-16 h-16 bg-transparent border-0 cursor-pointer rounded-2xl overflow-hidden shadow-lg" value={settings.primaryColor} onChange={e => onUpdateSettings({...settings, primaryColor: e.target.value})} />
-                    <input className="bg-zinc-900 p-5 rounded-2xl flex-grow text-xl font-mono border border-white/5 outline-none focus:border-violet-500 font-bold" value={settings.primaryColor} onChange={e => onUpdateSettings({...settings, primaryColor: e.target.value})} />
+                    <input className="bg-zinc-950 p-5 rounded-2xl flex-grow text-xl font-mono border border-white/10 outline-none focus:border-violet-500 font-bold" value={settings.primaryColor} onChange={e => onUpdateSettings({...settings, primaryColor: e.target.value})} />
                   </div>
                 </div>
                 <div className="space-y-6">
-                  <label className="text-sm font-black text-gray-500 uppercase tracking-widest leading-[1.6]">브랜드 명칭</label>
-                  <input className="w-full bg-zinc-900 p-5 rounded-2xl text-2xl border border-white/5 outline-none focus:border-violet-500 font-black tracking-tighter" value={settings.agencyName} onChange={e => onUpdateSettings({...settings, agencyName: e.target.value})} />
+                  <label className="text-sm font-black text-gray-400 uppercase tracking-widest leading-[1.6]">브랜드 명칭</label>
+                  <input className="w-full bg-zinc-950 p-5 rounded-2xl text-2xl border border-white/10 outline-none focus:border-violet-500 font-black tracking-tighter" value={settings.agencyName} onChange={e => onUpdateSettings({...settings, agencyName: e.target.value})} />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="space-y-4">
-                  <label className="text-xs font-black text-gray-500 uppercase tracking-widest leading-[1.6]">유튜브 URL</label>
-                  <input className="w-full bg-zinc-900 p-4 rounded-xl text-sm border border-white/5 outline-none focus:border-violet-500 font-bold" value={settings.youtubeUrl} onChange={e => onUpdateSettings({...settings, youtubeUrl: e.target.value})} />
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest leading-[1.6]">유튜브 URL</label>
+                  <input className="w-full bg-zinc-950 p-4 rounded-xl text-sm border border-white/10 outline-none focus:border-violet-500 font-bold" value={settings.youtubeUrl} onChange={e => onUpdateSettings({...settings, youtubeUrl: e.target.value})} />
                 </div>
                 <div className="space-y-4">
-                  <label className="text-xs font-black text-gray-500 uppercase tracking-widest leading-[1.6]">인스타그램 URL</label>
-                  <input className="w-full bg-zinc-900 p-4 rounded-xl text-sm border border-white/5 outline-none focus:border-violet-500 font-bold" value={settings.instagramUrl} onChange={e => onUpdateSettings({...settings, instagramUrl: e.target.value})} />
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest leading-[1.6]">인스타그램 URL</label>
+                  <input className="w-full bg-zinc-950 p-4 rounded-xl text-sm border border-white/10 outline-none focus:border-violet-500 font-bold" value={settings.instagramUrl} onChange={e => onUpdateSettings({...settings, instagramUrl: e.target.value})} />
                 </div>
                 <div className="space-y-4">
-                  <label className="text-xs font-black text-gray-500 uppercase tracking-widest leading-[1.6]">카카오톡 URL</label>
-                  <input className="w-full bg-zinc-900 p-4 rounded-xl text-sm border border-white/5 outline-none focus:border-violet-500 font-bold" value={settings.kakaoUrl} onChange={e => onUpdateSettings({...settings, kakaoUrl: e.target.value})} />
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest leading-[1.6]">카카오톡 URL</label>
+                  <input className="w-full bg-zinc-950 p-4 rounded-xl text-sm border border-white/10 outline-none focus:border-violet-500 font-bold" value={settings.kakaoUrl} onChange={e => onUpdateSettings({...settings, kakaoUrl: e.target.value})} />
                 </div>
               </div>
 
               <div className="space-y-6">
-                <label className="text-sm font-black text-gray-500 uppercase tracking-widest leading-[1.6]">메인 타이틀</label>
-                <input className="w-full bg-zinc-900 p-8 rounded-2xl text-4xl border border-white/5 outline-none focus:border-violet-500 font-black tracking-tight" value={settings.heroTitle} onChange={e => onUpdateSettings({...settings, heroTitle: e.target.value})} />
+                <label className="text-sm font-black text-gray-400 uppercase tracking-widest leading-[1.6]">메인 타이틀</label>
+                <input className="w-full bg-zinc-950 p-8 rounded-2xl text-4xl border border-white/10 outline-none focus:border-violet-500 font-black tracking-tight" value={settings.heroTitle} onChange={e => onUpdateSettings({...settings, heroTitle: e.target.value})} />
               </div>
               <div className="space-y-6">
-                <label className="text-sm font-black text-gray-500 uppercase tracking-widest leading-[1.6]">슬로건 (컴마로 구분)</label>
-                <textarea className="w-full bg-zinc-900 p-8 rounded-2xl text-2xl border border-white/5 outline-none focus:border-violet-500 font-bold leading-[2.4]" rows={3} value={settings.heroSlogan} onChange={e => onUpdateSettings({...settings, heroSlogan: e.target.value})} />
+                <label className="text-sm font-black text-gray-400 uppercase tracking-widest leading-[1.6]">슬로건 (컴마로 구분)</label>
+                <textarea className="w-full bg-zinc-950 p-8 rounded-2xl text-2xl border border-white/10 outline-none focus:border-violet-500 font-bold leading-[2.4]" rows={3} value={settings.heroSlogan} onChange={e => onUpdateSettings({...settings, heroSlogan: e.target.value})} />
               </div>
             </div>
           </div>
