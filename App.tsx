@@ -161,7 +161,7 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
             >
               <div className="space-y-4 text-center">
                  <h2 className="text-3xl md:text-5xl font-black leading-tight tracking-tighter break-keep">
-                  실시간 유튜브·틱톡 <span className="text-violet-500">누적 성과분석</span>
+                  실시간 유튜브·틱톡 <br className="md:hidden" /> <span className="text-violet-500">누적 성과분석</span>
                 </h2>
                 <p className="text-gray-500 text-xs md:text-lg font-bold uppercase tracking-[0.4em] opacity-40 italic">Global Traffic Metrics</p>
               </div>
@@ -187,13 +187,13 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
               {/* 핵심 성과 수치 카드 - 가로 정렬 */}
               <div className="grid md:grid-cols-2 gap-4 md:gap-10 max-w-5xl mx-auto">
                 <div className="glass-panel p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-start justify-center hover:bg-white/10 transition-all duration-500 group">
-                  <span className="text-gray-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 md:mb-4 group-hover:text-violet-400 transition-colors">국민 1인당 평균 시청</span>
+                  <span className="text-white text-xs md:text-sm font-black uppercase tracking-[0.3em] mb-3 md:mb-5 group-hover:text-violet-400 transition-colors">국민 1인당 평균 시청</span>
                   <div className="text-3xl md:text-7xl font-black text-white italic tracking-tighter">
                     {stats.perCapita}회
                   </div>
                 </div>
                 <div className="glass-panel p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-start justify-center hover:bg-white/10 transition-all duration-500 group">
-                  <span className="text-gray-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 md:mb-4 group-hover:text-violet-400 transition-colors">현재 일평균 시청수</span>
+                  <span className="text-white text-xs md:text-sm font-black uppercase tracking-[0.3em] mb-3 md:mb-5 group-hover:text-violet-400 transition-colors">현재 일평균 시청수</span>
                   <div className="text-3xl md:text-7xl font-black text-white italic tracking-tighter">
                     {Math.floor(stats.dailyViews / 10000)}만+
                   </div>
@@ -214,11 +214,23 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
                     
                     <div className="space-y-1">
                       <p className="text-base md:text-[2.2rem] text-white font-medium italic break-keep leading-[1.6] tracking-tight opacity-90 text-left">
-                        {hook.text}
-                        <span className="text-violet-500 font-black px-1 md:px-1.5 group-hover:text-violet-400 transition-colors bg-clip-text">
-                          {hook.highlight}
-                        </span>
-                        {hook.suffix}
+                        {idx === 0 ? (
+                          <>
+                            귀하의 상품은 죄가 없습니다, <br className="md:hidden" /> 문제는 
+                            <span className="text-violet-500 font-black px-1 md:px-1.5 group-hover:text-violet-400 transition-colors bg-clip-text">
+                              '조회수 0'
+                            </span>
+                            에서 멈춘 스크롤입니다.
+                          </>
+                        ) : (
+                          <>
+                            {hook.text}
+                            <span className="text-violet-500 font-black px-1 md:px-1.5 group-hover:text-violet-400 transition-colors bg-clip-text">
+                              {hook.highlight}
+                            </span>
+                            {hook.suffix}
+                          </>
+                        )}
                       </p>
                     </div>
                   </motion.div>
@@ -459,7 +471,12 @@ const App: React.FC = () => {
               <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs md:text-sm font-black mb-6 shadow-sm">
                 <Award size={18} /> 실전 데이터로 증명합니다
               </div>
-              <h2 className="text-3xl md:text-5xl font-black mb-8 leading-[1.6] tracking-tighter text-center">단순한 대행이 아닌,<br/> <span style={{ color: settings.primaryColor }}>100여 개의 채널</span>을 직접 운영하는<br/>실전 전문가 집단</h2>
+              <h2 className="text-3xl md:text-5xl font-black mb-8 leading-[2.1] md:leading-[2.0] tracking-tighter text-center">
+                단순한 대행이 아닌,<br/> 
+                <span style={{ color: settings.primaryColor }}>100여 개의 채널</span>을 <br className="md:hidden" />
+                직접 운영하는<br/>
+                실전 전문가 집단
+              </h2>
               <p className="text-base md:text-xl text-gray-500 max-w-3xl mx-auto font-medium leading-relaxed text-center">현재 대형 인플루언서 매니지먼트 및 100여 개의 자사 채널을 직접 운영하며 쌓은 독보적인 데이터로 당신의 성장을 견인합니다.</p>
             </motion.div>
 
@@ -560,7 +577,7 @@ const LoginModal: React.FC<{ onClose: () => void; onLogin: (id: string, pw: stri
   const [pw, setPw] = useState('');
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex items-center justify-center p-6">
-      <div className="w-full max-w-sm glass-panel p-10 rounded-[2.5rem] border border-white/10">
+      <div className="w-full max-sm glass-panel p-10 rounded-[2.5rem] border border-white/10">
         <h2 className="text-xl font-black mb-8">관리자 로그인</h2>
         <input className="w-full bg-zinc-950 p-4 rounded-xl mb-4 text-sm border border-white/5" placeholder="아이디" value={id} onChange={e => setId(e.target.value)} />
         <input className="w-full bg-zinc-950 p-4 rounded-xl mb-6 text-sm border border-white/5" type="password" placeholder="비밀번호" value={pw} onChange={e => setPw(e.target.value)} />
