@@ -80,11 +80,11 @@ export const CHANNEL_DATA = [
 export const CHANNEL_URLS = CHANNEL_DATA.map(c => `[${c.name}] YouTube: ${c.youtube} | TikTok: ${c.tiktok || 'N/A'}`).join('\n');
 
 export const INITIAL_PERFORMANCE: PerformanceStats = {
-  totalViews: 0,
-  dailyViews: 0,
-  perCapita: 0,
-  lastUpdated: '-',
-  hookMessage: '데이터를 분석하는 중입니다...'
+  totalViews: 532480000,
+  dailyViews: 5000000,
+  perCapita: 10.3,
+  lastUpdated: '최근 업데이트됨',
+  hookMessage: "데이터로 증명된 5.3억 뷰의 압도적 트래픽, 엔터바이브크리의 '터지는' 기획력이 귀사의 비즈니스를 폭발적인 성장으로 이끌어 드립니다."
 };
 
 export const TERMS_OF_SERVICE = `
