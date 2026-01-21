@@ -64,7 +64,6 @@ export const INITIAL_SETTINGS: SiteSettings = {
   kakaoUrl: 'https://kakao.com'
 };
 
-// 정밀 분석을 위한 채널 URL 정형화 데이터
 export const CHANNEL_DATA = [
   { name: '연픽', youtube: 'https://youtube.com/channel/UCYdOBCsWT4RzSB8AuqxAmNQ', tiktok: 'https://www.tiktok.com/@finclmoney' },
   { name: '오이거좋은데', youtube: 'https://www.youtube.com/channel/UCN9BwA21OHoOrWZaqImySBg', tiktok: 'https://www.tiktok.com/@ohgoodinde' },
@@ -79,21 +78,25 @@ export const CHANNEL_DATA = [
 
 export const CHANNEL_URLS = CHANNEL_DATA.map(c => `[${c.name}] YouTube: ${c.youtube} | TikTok: ${c.tiktok || 'N/A'}`).join('\n');
 
+export const CORE_HOOKS = [
+  { text: "귀하의 상품은 죄가 없습니다, 문제는 ", highlight: "'조회수 0'", suffix: "에서 멈춘 스크롤입니다." },
+  { text: "아직도 1분 넘게 설명하시나요? 고객의 지갑이 열리는 시간은 ", highlight: "단 3초", suffix: "면 충분합니다." },
+  { text: "알고리즘의 파도를 타느냐, 휩쓸리느냐. 실전 데이터로 증명된 ", highlight: "숏폼의 정석", suffix: "을 만나보세요." }
+];
+
 export const INITIAL_PERFORMANCE: PerformanceStats = {
   totalViews: 530000000,
   dailyViews: 5000000,
   perCapita: 10.3,
-  lastUpdated: '최근 업데이트됨',
-  hookMessage: "데이터로 증명된 5.3억 뷰의 압도적 트래픽, 엔터바이브크리의 '터지는' 기획력이 귀사의 비즈니스를 폭발적인 성장으로 이끌어 드립니다."
+  lastUpdated: '데이터 동기화 완료',
+  hookMessage: CORE_HOOKS.map(h => `${h.text}${h.highlight}${h.suffix}`).join('\n')
 };
 
 export const TERMS_OF_SERVICE = `
 제1조 (목적)
-본 약관은 [주식회사 마켓꾸](이하 “회사”)가 운영하는 홈페이지([도메인주소])에서 제공하는 서비스 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
-...
+본 약관은 [주식회사 마켓꾸](이하 “회사”)가 운영하는 홈페이지에서 제공하는 서비스 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
 `;
 
 export const PRIVACY_POLICY = `
 [주식회사 마켓꾸](이하 “회사”)는 개인정보 보호법 등 관련 법령을 준수하며, 이용자의 개인정보를 소중히 보호합니다.
-...
 `;
