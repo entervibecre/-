@@ -210,7 +210,7 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
                   >
                     <div className="w-1 md:w-1.5 h-auto min-h-[30px] md:min-h-[70px] bg-gradient-to-b from-violet-500 to-transparent rounded-full opacity-30 group-hover:opacity-100 transition-opacity shrink-0" />
                     <div className="space-y-1">
-                      <p className="text-base md:text-[2.2rem] text-white font-medium italic break-keep leading-[1.6] tracking-tight opacity-90 text-left">
+                      <p className="text-base md:text-[2.2rem] text-white font-medium italic whitespace-pre-line break-keep leading-[1.6] tracking-tight opacity-90 text-left">
                         {hook.text}
                         <span className="text-violet-500 font-black px-1 md:px-1.5 group-hover:text-violet-400 transition-colors bg-clip-text">
                           {hook.highlight}
@@ -223,9 +223,19 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
               </div>
 
               <div className="flex items-center justify-center gap-4 pt-6 md:pt-12 border-t border-white/5">
-                <div className="flex items-center gap-3 text-base md:text-xl font-black text-white bg-white/10 px-12 py-5 rounded-full border border-white/20 shadow-2xl backdrop-blur-xl hover:bg-white/20 transition-all duration-300">
-                  <RefreshCw size={22} className={loading ? 'animate-spin text-violet-500' : 'text-violet-400'} />
-                  실시간 통합 데이터: <span className="text-violet-400 ml-1">데이터 동기화 완료 ({stats.lastUpdated})</span>
+                <div className="flex items-center gap-3 text-[13px] md:text-xl font-black text-white bg-white/10 px-5 md:px-16 py-4 md:py-8 rounded-2xl md:rounded-full border border-white/20 shadow-2xl backdrop-blur-xl hover:bg-white/20 transition-all duration-300 min-w-[280px] md:min-w-[500px]">
+                  <RefreshCw size={18} className={loading ? 'animate-spin text-violet-500' : 'text-violet-400'} />
+                  <div className="flex flex-col md:items-center text-left md:text-center w-full whitespace-nowrap overflow-hidden">
+                    {/* Mobile View */}
+                    <span className="md:hidden">
+                      실시간 통합 데이터 : <span className="text-violet-400">데이터 동기화 완료</span>
+                    </span>
+                    {/* PC View */}
+                    <div className="hidden md:flex flex-col items-center">
+                      <span className="text-white text-lg">실시간 통합 데이터:</span>
+                      <span className="text-violet-400 text-xl font-black">데이터 동기화 완료 ({stats.lastUpdated})</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -394,7 +404,12 @@ const App: React.FC = () => {
           <div className="max-w-6xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20 text-center">
               <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-sm font-black mb-6 shadow-sm"><Award size={18} /> 실전 데이터로 증명합니다</div>
-              <h2 className="text-3xl md:text-5xl font-black mb-8 leading-relaxed tracking-tighter">단순한 대행이 아닌, <span style={{ color: settings.primaryColor }}>100여 개의 채널</span>을 직접 운영하는 실전 전문가 집단</h2>
+              <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight md:leading-tight tracking-tighter text-center">
+                단순한 대행이 아닌 실행사로서<br />
+                <span style={{ color: settings.primaryColor }}>100여 개의 채널</span>을<br />
+                직접 운영하는<br />
+                실전 전문가 집단
+              </h2>
             </motion.div>
             <div className="grid md:grid-cols-3 gap-8">
               {INITIAL_SOLUTIONS.map((sol) => (

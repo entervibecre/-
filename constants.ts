@@ -79,7 +79,7 @@ export const CHANNEL_DATA = [
 export const CHANNEL_URLS = CHANNEL_DATA.map(c => `[${c.name}] YouTube: ${c.youtube} | TikTok: ${c.tiktok || 'N/A'}`).join('\n');
 
 export const CORE_HOOKS = [
-  { text: "귀하의 상품은 죄가 없습니다, 문제는 ", highlight: "'조회수 0'", suffix: "에서 멈춘 스크롤입니다." },
+  { text: "귀하의 상품은 죄가 없습니다.\n문제는 ", highlight: "'조회수 0'", suffix: "에서 멈춘 스크롤입니다." },
   { text: "아직도 1분 넘게 설명하시나요? 고객의 지갑이 열리는 시간은 ", highlight: "단 3초", suffix: "면 충분합니다." },
   { text: "알고리즘의 파도를 타느냐, 휩쓸리느냐. 실전 데이터로 증명된 ", highlight: "숏폼의 정석", suffix: "을 만나보세요." }
 ];
@@ -88,7 +88,7 @@ export const INITIAL_PERFORMANCE: PerformanceStats = {
   totalViews: 530000000,
   dailyViews: 5000000,
   perCapita: 10.3,
-  lastUpdated: '데이터 동기화 완료',
+  lastUpdated: new Date().toLocaleTimeString('ko-KR'),
   hookMessage: CORE_HOOKS.map(h => `${h.text}${h.highlight}${h.suffix}`).join('\n')
 };
 
