@@ -99,6 +99,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onSubmit }) => {
 
 // --- Live Dashboard Component ---
 const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => {
+  // 초기 상태를 항상 INITIAL_PERFORMANCE로 설정하여 API 실패 시에도 UI가 유지되도록 함
   const [stats, setStats] = useState<PerformanceStats>(INITIAL_PERFORMANCE);
   const [loading, setLoading] = useState(false);
 
@@ -107,15 +108,22 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
     const lastUpdateDate = localStorage.getItem('performance_update_date');
     const today = new Date().toLocaleDateString('ko-KR');
 
-    // 캐시가 오늘 날짜면 즉시 상태 업데이트 후 종료
+    // 이미 오늘 업데이트된 캐시가 있다면 즉시 리턴
     if (!force && cachedStats && lastUpdateDate === today) {
       setStats(JSON.parse(cachedStats));
       return;
     }
 
+    // API 키가 없거나 Placeholder일 경우 무시 (Safe-render)
+    const apiKey = process.env.API_KEY;
+    if (!apiKey || apiKey === 'PLACEHOLDER_API_KEY' || apiKey === 'undefined') {
+      console.warn("Gemini API Key is not set or invalid. Displaying default performance stats.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: apiKey });
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: `당신은 세계적인 SNS 데이터 분석가입니다. 아래 제공된 채널들의 실시간 누적 조회수를 정밀하게 분석하여 합산하십시오.
@@ -129,7 +137,7 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
         3. 정밀 합산: 9개 채널 모두의 유튜브 조회수와 틱톡 조회수를 합산하여 최종 'totalViews'를 도출하세요. (목표 약 5.3억 뷰)
         4. 일평균 조회수: 하루 평균 발생하는 예상 시청 횟수를 계산하세요 (약 500만 뷰 이상).
         5. 국민 1인당 시청: 대한민국 인구수(5,170만 명)로 나누어 시청 횟수를 계산하세요.
-        6. 후킹 문구: "데이터로 증명된 5.3억 뷰의 압도적 트래픽, 엔터바이브크리의 '터지는' 기획력이 귀사의 비즈니스를 폭발적인 성장으로 이끌어 드립니다."와 "대한민국 국민 1인당 엔터바이브의 영상을 10회 이상 시청하고 있습니다."를 포함하여 강력하게 작성하세요.
+        6. 후킹 문구: "데이터로 증명된 5.3억 뷰의 압도적 트래픽, 엔터바이브크리의 '터지는' 기획력이 귀사의 비즈니스를 폭발적인 성장으로 이끌어 드립니다."를 기반으로 작성하세요.
         7. 결과물: 오직 지정된 JSON 형식으로만 반환하세요.
 
         출력 JSON 스키마:
@@ -165,7 +173,7 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
         localStorage.setItem('performance_update_date', today);
       }
     } catch (error) {
-      console.error("Performance data fetch failed:", error);
+      console.error("Performance data fetch failed. Using default values.", error);
     } finally {
       setLoading(false);
     }
@@ -182,13 +190,11 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
   };
 
   return (
-    <section id="live-dashboard" className="py-24 px-6 md:px-24 bg-transparent relative overflow-visible min-h-[600px]">
+    <section id="live-dashboard" className="py-24 px-6 md:px-24 bg-transparent relative overflow-visible min-h-[600px] block">
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="glass-panel p-10 md:p-24 rounded-[3rem] md:rounded-[4rem] border-white/10 shadow-2xl relative overflow-hidden bg-zinc-900/30">
-          {/* Decorative Background */}
+        <div className="glass-panel p-10 md:p-24 rounded-[3rem] md:rounded-[4rem] border-white/10 shadow-2xl relative overflow-hidden bg-zinc-900/40">
           <div className="absolute top-0 right-0 w-96 h-96 bg-violet-600/10 blur-[120px] rounded-full -mr-48 -mt-48 pointer-events-none" />
           
-          {/* Badge Adjusted for Mobile */}
           <div className="absolute top-0 left-0 p-5 md:p-10 pointer-events-none z-20">
             <div className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-1.5 rounded-full bg-red-600/20 border border-red-600/30 text-red-500 text-[10px] md:text-xs font-black animate-pulse">
               <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-500 shadow-[0_0_10px_red]" /> LIVE PERFORMANCE
@@ -211,51 +217,50 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
               
               <div className="flex flex-col items-center">
                 <div className="relative inline-flex items-baseline">
-                  {/* 로딩 유무와 관계없이 항상 투명도 100%의 화이트 그라데이션 유지 */}
-                  <div className="text-7xl md:text-[13rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40 leading-none">
+                  {/* 로딩 유무와 관계없이 상시 100% 투명도의 화이트 그라데이션 적용 */}
+                  <div className="text-7xl md:text-[14rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40 leading-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
                     {formatNumberOnly(stats.totalViews)}
                   </div>
-                  <div className="text-3xl md:text-[5rem] font-black text-white ml-2 md:ml-4 tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+                  <div className="text-3xl md:text-[5.5rem] font-black text-white ml-3 md:ml-5 tracking-tighter drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
                     억 뷰
                   </div>
                   <motion.div 
                     initial={{ width: 0 }}
                     whileInView={{ width: '100%' }}
                     transition={{ duration: 2, delay: 0.5 }}
-                    className="h-1.5 bg-gradient-to-r from-transparent via-violet-500/50 to-transparent absolute -bottom-4 md:-bottom-8 left-0"
+                    className="h-1.5 bg-gradient-to-r from-transparent via-violet-500 to-transparent absolute -bottom-4 md:-bottom-10 left-0"
                   />
                 </div>
-                <span className="text-violet-400 text-lg md:text-3xl font-black mt-10 md:mt-14 tracking-tighter uppercase italic">Total Cumulative Views</span>
+                <span className="text-violet-400 text-lg md:text-3xl font-black mt-12 md:mt-16 tracking-tighter uppercase italic">Total Cumulative Views</span>
               </div>
 
-              {/* Impressive Stats Grid */}
               <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-                <div className="glass-panel p-6 md:p-10 rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-center justify-center hover:bg-white/10 transition-colors">
-                  <span className="text-gray-400 text-xs md:text-base font-black uppercase tracking-widest mb-3 md:mb-4">국민 1인당 평균 시청</span>
-                  <div className="text-4xl md:text-6xl font-black text-white italic">
+                <div className="glass-panel p-8 md:p-12 rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-center justify-center hover:bg-white/10 transition-colors shadow-inner">
+                  <span className="text-gray-400 text-xs md:text-base font-black uppercase tracking-widest mb-3 md:mb-5">국민 1인당 평균 시청</span>
+                  <div className="text-4xl md:text-7xl font-black text-white italic tracking-tighter">
                     {stats.perCapita}회
                   </div>
-                  <p className="text-gray-500 text-[10px] md:text-xs mt-3 md:mt-4 font-bold">대한민국 인구수 대비 압도적 도달률</p>
+                  <p className="text-gray-500 text-[10px] md:text-xs mt-4 md:mt-5 font-bold">대한민국 인구수 대비 압도적 도달률</p>
                 </div>
-                <div className="glass-panel p-6 md:p-10 rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-center justify-center hover:bg-white/10 transition-colors">
-                  <span className="text-gray-400 text-xs md:text-base font-black uppercase tracking-widest mb-3 md:mb-4">현재 일평균 시청수</span>
-                  <div className="text-4xl md:text-6xl font-black text-white italic">
+                <div className="glass-panel p-8 md:p-12 rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-center justify-center hover:bg-white/10 transition-colors shadow-inner">
+                  <span className="text-gray-400 text-xs md:text-base font-black uppercase tracking-widest mb-3 md:mb-5">현재 일평균 시청수</span>
+                  <div className="text-4xl md:text-7xl font-black text-white italic tracking-tighter">
                     {Math.floor(stats.dailyViews / 10000)}만+
                   </div>
-                  <p className="text-gray-500 text-[10px] md:text-xs mt-3 md:mt-4 font-bold">평균 하루 500만 뷰 이상 시청</p>
+                  <p className="text-gray-500 text-[10px] md:text-xs mt-4 md:mt-5 font-bold">평균 하루 500만 뷰 이상 시청</p>
                 </div>
               </div>
 
               <div className="max-w-4xl mx-auto min-h-[4em] flex flex-col items-center justify-center gap-4">
-                <p className="text-xl md:text-4xl text-white font-black italic break-keep leading-snug tracking-tight px-4 md:px-0 opacity-90">
+                <p className="text-xl md:text-4xl text-white font-black italic break-keep leading-snug tracking-tight px-4 md:px-0 opacity-100 drop-shadow-md">
                   "{stats.hookMessage}"
                 </p>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-10 border-t border-white/5">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-10 border-t border-white/10">
                 <div className="flex items-center gap-3 text-sm font-black text-gray-500">
                   <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-                  최종 동기화: {stats.lastUpdated} (매일 00시 기준 갱신)
+                  데이터 정보: {stats.lastUpdated} (매일 00시 자동 동기화)
                 </div>
               </div>
             </motion.div>
