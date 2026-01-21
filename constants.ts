@@ -80,7 +80,7 @@ export const CHANNEL_DATA = [
 export const CHANNEL_URLS = CHANNEL_DATA.map(c => `[${c.name}] YouTube: ${c.youtube} | TikTok: ${c.tiktok || 'N/A'}`).join('\n');
 
 export const INITIAL_PERFORMANCE: PerformanceStats = {
-  totalViews: 532480000,
+  totalViews: 530000000,
   dailyViews: 5000000,
   perCapita: 10.3,
   lastUpdated: '최근 업데이트됨',
