@@ -36,6 +36,8 @@ export interface SiteSettings {
 
 export interface PerformanceStats {
   totalViews: number;
+  dailyViews: number;
+  perCapita: number;
   lastUpdated: string;
   hookMessage: string;
 }

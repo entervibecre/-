@@ -17,10 +17,9 @@ import {
 // --- Inquiry Form ---
 interface InquiryFormProps {
   onSubmit: (data: any) => Promise<boolean>;
-  buttonText?: string;
 }
 
-const InquiryForm: React.FC<InquiryFormProps> = ({ onSubmit, buttonText }) => {
+const InquiryForm: React.FC<InquiryFormProps> = ({ onSubmit }) => {
   const [form, setForm] = useState({ name: '', contact: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
@@ -92,7 +91,7 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onSubmit, buttonText }) => {
         disabled={isSent || isSubmitting}
         className={`w-full py-6 md:py-10 rounded-[2rem] font-black text-xl md:text-2xl flex items-center justify-center gap-4 transition-all shadow-xl active:scale-95 break-keep ${isSent ? 'bg-green-600 scale-95 opacity-80' : 'bg-violet-600 hover:bg-violet-700 shadow-violet-600/30'} ${isSubmitting ? 'opacity-70 cursor-wait' : ''}`}
       >
-        {isSubmitting ? <><Loader2 size={32} className="animate-spin" /> 전송 중...</> : isSent ? <><Check size={32} /> 신청 완료되었습니다</> : (buttonText || '혜택 선점 및 상담 신청하기')}
+        {isSubmitting ? <><Loader2 size={32} className="animate-spin" /> 전송 중...</> : isSent ? <><Check size={32} /> 신청 완료되었습니다</> : '무료 숏폼 광고 신청하기'}
       </button>
     </form>
   );
@@ -104,7 +103,6 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
   const [loading, setLoading] = useState(true);
 
   const fetchRealtimeStats = async (force = false) => {
-    // 0:00:00 기준 하루 한 번 업데이트 로직
     const cachedStats = localStorage.getItem('performance_stats');
     const lastUpdateDate = localStorage.getItem('performance_update_date');
     const today = new Date().toLocaleDateString('ko-KR');
@@ -120,23 +118,27 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
-        contents: `당신은 세계적인 SNS 데이터 분석가입니다. 아래 제공된 엔터바이브크리 운영 채널들의 실시간 누적 조회수를 정밀하게 분석하여 합산하십시오.
+        contents: `당신은 세계적인 SNS 데이터 분석가입니다. 아래 제공된 채널들의 실시간 누적 조회수를 정밀하게 분석하여 합산하십시오.
         
         분석 대상 채널 리스트:
         ${CHANNEL_URLS}
         
-        분석 지침:
-        1. 유튜브(YouTube): 각 채널 URL의 '정보(About)' 섹션에 명시된 '공식 전체 조회수'를 구글 검색을 통해 정확하게 추출하세요. 만약 정보 탭이 보이지 않으면 최신 통계 사이트(예: Social Blade, Playboard)의 데이터를 참조하여 실시간성에 가장 가까운 수치를 가져오세요.
-        2. 틱톡(TikTok): 제공된 계정의 프로필 누적 조회수 또는 해당 계정의 전체 동영상 조회수 합계를 검색하여 추산하세요. 틱톡 공식 데이터가 비공개인 경우 소셜 통계 플랫폼의 최근 데이터를 반영하세요.
-        3. 정밀 합산: 9개 채널 모두의 유튜브 조회수와 틱톡 조회수를 하나도 빠짐없이 합산하여 최종 'Grand Total'을 도출하세요. (이 수치는 수억 회 단위여야 합니다.)
-        4. 후킹 문구: 이 거대한 수치를 본 잠재 고객이 "여기라면 내 채널도 키워줄 수 있겠다"라고 확신할 수 있도록 강력한 비즈니스 임팩트 문구를 작성하세요.
-        5. 결과물: 오직 지정된 JSON 형식으로만 반환하세요.
+        분석 및 계산 지침:
+        1. 유튜브(YouTube): 각 채널 URL의 '정보(About)' 섹션에 명시된 '공식 전체 조회수'를 구글 검색을 통해 정확하게 추출하세요.
+        2. 틱톡(TikTok): 제공된 계정의 프로필 누적 조회수 또는 해당 계정의 전체 동영상 조회수 합계를 검색하여 추산하세요.
+        3. 정밀 합산: 9개 채널 모두의 유튜브 조회수와 틱톡 조회수를 하나도 빠짐없이 합산하여 최종 'totalViews'를 도출하세요. (예: 530,000,000 이상)
+        4. 일평균 조회수 계산: 현재 채널들의 활성도와 성장세를 고려하여 하루 평균 발생하는 예상 시청 횟수를 계산하세요 (단위: 5,000,000 내외).
+        5. 국민 1인당 시청 횟수 계산: 최종 합산 조회수를 대한민국 인구수(5,170만 명)로 나누어 국민 1인당 평균 몇 회 시청했는지 계산하세요.
+        6. 후킹 문구 작성: "데이터로 증명된 5.3억 뷰의 압도적 트래픽, 엔터바이브크리의 '터지는' 기획력이 귀사의 비즈니스를 폭발적인 성장으로 이끌어 드립니다."와 같은 톤으로 작성하세요.
+        7. 결과물: 오직 지정된 JSON 형식으로만 반환하세요.
 
         출력 JSON 스키마:
         {
-          "totalViews": 524800000, // 전체 합산 조회수 (반드시 숫자형)
-          "lastUpdated": "2026-01-21 14:00", // 분석 완료 시간
-          "hookMessage": "우리가 만들어낸 5억 뷰의 성공 방정식, 이제 당신의 비즈니스에 이식해 드립니다."
+          "totalViews": 530000000,
+          "dailyViews": 5000000,
+          "perCapita": 10.2,
+          "lastUpdated": "2026-01-21 14:00",
+          "hookMessage": "데이터로 증명된 5.3억 뷰의 압도적 트래픽, 엔터바이브크리의 '터지는' 기획력이 귀사의 비즈니스를 폭발적인 성장으로 이끌어 드립니다."
         }`,
         config: {
           tools: [{ googleSearch: {} }],
@@ -145,18 +147,18 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
             type: Type.OBJECT,
             properties: {
               totalViews: { type: Type.NUMBER },
+              dailyViews: { type: Type.NUMBER },
+              perCapita: { type: Type.NUMBER },
               lastUpdated: { type: Type.STRING },
               hookMessage: { type: Type.STRING }
             },
-            required: ["totalViews", "lastUpdated", "hookMessage"]
+            required: ["totalViews", "dailyViews", "perCapita", "lastUpdated", "hookMessage"]
           }
         }
       });
 
       const data = JSON.parse(response.text || '{}');
       setStats(data);
-      
-      // 캐싱 저장
       localStorage.setItem('performance_stats', JSON.stringify(data));
       localStorage.setItem('performance_update_date', today);
     } catch (error) {
@@ -178,41 +180,61 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
 
   return (
     <section className="py-24 px-6 md:px-24 bg-transparent relative overflow-hidden">
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="glass-panel p-10 md:p-24 rounded-[3rem] md:rounded-[4rem] border-white/10 shadow-2xl relative overflow-hidden">
-          {/* Background Decorative Element */}
+          {/* Decorative Background */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-violet-600/10 blur-[120px] rounded-full -mr-48 -mt-48" />
           
-          <div className="absolute top-0 right-0 p-10">
+          <div className="absolute top-0 left-0 p-10">
             <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/20 border border-red-600/30 text-red-500 text-xs font-black animate-pulse">
-              <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_red]" /> DAILY PERFORMANCE
+              <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_red]" /> LIVE PERFORMANCE
             </div>
           </div>
 
           <div className="text-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="space-y-12"
+              className="space-y-16"
             >
-              <h2 className="text-3xl md:text-5xl font-black leading-tight tracking-tighter break-keep">
-                실시간 유튜브,틱톡 <br className="md:hidden" /><span className="text-violet-500">누적 성과분석</span>
-              </h2>
+              <div className="space-y-4">
+                 <h2 className="text-3xl md:text-5xl font-black leading-tight tracking-tighter break-keep">
+                  실시간 유튜브,틱톡 <br className="md:hidden" /><span className="text-violet-500">누적 성과분석</span>
+                </h2>
+                <p className="text-gray-500 text-sm md:text-lg font-black uppercase tracking-[0.4em]">Integrated Success Metrics</p>
+              </div>
               
               <div className="flex flex-col items-center">
-                <span className="text-gray-500 text-sm md:text-base font-black uppercase tracking-[0.3em] mb-6">Total Cumulative Views</span>
                 <div className="relative inline-block">
-                  <div className="text-7xl md:text-[10rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/10 leading-none min-h-[1.2em] flex items-center justify-center">
-                    {loading ? <Loader2 className="animate-spin w-20 h-20" /> : formatNumber(stats.totalViews)}
+                  <div className="text-7xl md:text-[12rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/10 leading-none min-h-[1em] flex items-center justify-center">
+                    {loading ? <Loader2 className="animate-spin w-24 h-24" /> : formatNumber(stats.totalViews)}
                   </div>
-                  {/* Glowing line under number */}
                   <motion.div 
                     initial={{ width: 0 }}
                     whileInView={{ width: '100%' }}
-                    transition={{ duration: 1.5, delay: 0.5 }}
-                    className="h-1 bg-gradient-to-r from-transparent via-violet-500 to-transparent absolute -bottom-4 left-0"
+                    transition={{ duration: 2, delay: 0.5 }}
+                    className="h-1.5 bg-gradient-to-r from-transparent via-violet-500 to-transparent absolute -bottom-6 left-0"
                   />
+                </div>
+                <span className="text-violet-400 text-xl md:text-3xl font-black mt-8 tracking-tighter uppercase italic">Total Cumulative Views</span>
+              </div>
+
+              {/* Impressive Stats Grid */}
+              <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div className="glass-panel p-8 rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-center justify-center">
+                  <span className="text-gray-400 text-sm md:text-base font-black uppercase tracking-widest mb-4">국민 1인당 평균 시청</span>
+                  <div className="text-4xl md:text-6xl font-black text-white italic">
+                    {loading ? "..." : `${stats.perCapita}회`}
+                  </div>
+                  <p className="text-gray-500 text-xs mt-4 font-bold">전 국민(5,170만) 기준 데이터 합산</p>
+                </div>
+                <div className="glass-panel p-8 rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-center justify-center">
+                  <span className="text-gray-400 text-sm md:text-base font-black uppercase tracking-widest mb-4">현재 일평균 시청수</span>
+                  <div className="text-4xl md:text-6xl font-black text-white italic">
+                    {loading ? "..." : `${formatNumber(stats.dailyViews)}+`}
+                  </div>
+                  <p className="text-gray-500 text-xs mt-4 font-bold">매일 약 500만 명 이상이 시청 중</p>
                 </div>
               </div>
 
@@ -222,17 +244,17 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
                 </p>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-10 border-t border-white/5">
                 <div className="flex items-center gap-3 text-sm font-black text-gray-500">
                   <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-                  Last Updated: {stats.lastUpdated}
+                  마지막 업데이트: {stats.lastUpdated}
                 </div>
                 {!loading && (
                    <button 
                     onClick={() => fetchRealtimeStats(true)}
-                    className="flex items-center gap-2 text-xs font-black text-violet-500 hover:text-violet-400 transition-colors underline underline-offset-4"
+                    className="flex items-center gap-2 text-xs font-black text-violet-500 hover:text-violet-400 transition-colors underline underline-offset-8"
                   >
-                    데이터 강제 갱신
+                    데이터 강제 갱신하기
                   </button>
                 )}
               </div>
@@ -244,7 +266,7 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
   );
 };
 
-// --- Other Components ---
+// --- Consultation Component ---
 interface ConsultationPageProps {
   onClose: () => void;
   onSubmit: (data: any) => Promise<boolean>;
@@ -281,10 +303,7 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onClose, onSubmit }
           </div>
 
           <div className="glass-panel p-10 md:p-20 rounded-[3rem] border-white/10 shadow-2xl">
-            <InquiryForm 
-              onSubmit={onSubmit} 
-              buttonText="상담 신청하고 성장 시작하기"
-            />
+            <InquiryForm onSubmit={onSubmit} />
           </div>
         </div>
       </div>
@@ -294,9 +313,7 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onClose, onSubmit }
 
 const VideoCard: React.FC<{ video: VideoReference; isShort?: boolean }> = ({ video, isShort }) => {
   const handleOpenVideo = () => {
-    if (video.embedUrl) {
-      window.open(video.embedUrl, '_blank');
-    }
+    if (video.embedUrl) window.open(video.embedUrl, '_blank');
   };
 
   return (
@@ -323,7 +340,6 @@ const VideoCard: React.FC<{ video: VideoReference; isShort?: boolean }> = ({ vid
 
 const HorizontalScrollContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth } = scrollRef.current;
@@ -348,7 +364,6 @@ const HorizontalScrollContainer: React.FC<{ children: React.ReactNode }> = ({ ch
   );
 };
 
-// --- Star Background ---
 const StarBackground: React.FC<{ springX: any; springY: any }> = ({ springX, springY }) => {
   const layer1X = useTransform(springX, (v: number) => v * 0.15);
   const layer1Y = useTransform(springY, (v: number) => v * 0.15);
@@ -391,7 +406,6 @@ const StarBackground: React.FC<{ springX: any; springY: any }> = ({ springX, spr
   );
 };
 
-// --- Main App ---
 const App: React.FC = () => {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -399,7 +413,6 @@ const App: React.FC = () => {
   const [isConsultationPageOpen, setIsConsultationPageOpen] = useState(false);
   const [activeLegalView, setActiveLegalView] = useState<'terms' | 'privacy' | null>(null);
   
-  const [activeAdminTab, setActiveAdminTab] = useState<AdminTab>('leads');
   const [settings, setSettings] = useState<SiteSettings>(INITIAL_SETTINGS);
   const [solutions, setSolutions] = useState<Solution[]>(INITIAL_SOLUTIONS);
   const [references, setReferences] = useState<VideoReference[]>(INITIAL_REFERENCES);
@@ -435,21 +448,6 @@ const App: React.FC = () => {
   const saveToLocalStorage = useCallback((key: string, data: any) => {
     localStorage.setItem(key, JSON.stringify(data));
   }, []);
-
-  const handleUpdateSettings = (newSettings: SiteSettings) => {
-    setSettings(newSettings);
-    saveToLocalStorage('evc_settings', newSettings);
-  };
-
-  const handleUpdateSolutions = (newSolutions: Solution[]) => {
-    setSolutions(newSolutions);
-    saveToLocalStorage('evc_solutions', newSolutions);
-  };
-
-  const handleUpdateReferences = (newReferences: VideoReference[]) => {
-    setReferences(newReferences);
-    saveToLocalStorage('evc_references', newReferences);
-  };
 
   const handleAddInquiry = async (inquiry: Omit<Inquiry, 'id' | 'date'>) => {
     const newInquiry: Inquiry = {
@@ -497,7 +495,6 @@ const App: React.FC = () => {
           </motion.div>
         </section>
 
-        {/* Live Performance Dashboard Section */}
         <LiveDashboard primaryColor={settings.primaryColor} />
 
         <section id="section-0" className="py-24 md:py-32 px-6 md:px-24 bg-transparent relative overflow-hidden">
@@ -511,7 +508,7 @@ const App: React.FC = () => {
             </motion.div>
 
             <div className="grid md:grid-cols-3 gap-8 md:gap-10 mb-24 md:mb-32">
-              {solutions.map((sol, i) => (
+              {solutions.map((sol) => (
                 <div key={sol.id} className="glass-panel p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem] hover:border-violet-500/30 transition-all duration-500 flex flex-col items-start text-left">
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-[1.5rem] bg-violet-500/10 flex items-center justify-center mb-8 text-violet-500">
                     {sol.iconName === 'Video' && <Video size={32} />}
@@ -594,7 +591,7 @@ const App: React.FC = () => {
   );
 };
 
-// Placeholder for LoginModal (simplified for context)
+// Placeholder for LoginModal
 const LoginModal: React.FC<{ onClose: () => void; onLogin: (id: string, pw: string) => boolean }> = ({ onClose, onLogin }) => {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');

@@ -81,6 +81,8 @@ export const CHANNEL_URLS = CHANNEL_DATA.map(c => `[${c.name}] YouTube: ${c.yout
 
 export const INITIAL_PERFORMANCE: PerformanceStats = {
   totalViews: 0,
+  dailyViews: 0,
+  perCapita: 0,
   lastUpdated: '-',
   hookMessage: '데이터를 분석하는 중입니다...'
 };
