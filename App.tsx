@@ -509,13 +509,15 @@ const App: React.FC = () => {
             <div className="flex-1 h-px bg-white/5" />
           </div>
           <div className="flex flex-col gap-8 md:gap-24">
-            <div>
-              <div className="px-6 md:px-24 flex items-center gap-3 mb-4 md:mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-lg md:text-2xl font-black tracking-tight">롱폼 기획 제작</h3></div>
-              <HorizontalScrollContainer>{references.filter(r => r.type === 'Long-form').map(video => <VideoCard key={video.id} video={video} />)}</HorizontalScrollContainer>
-            </div>
+            {/* 숏폼 마케팅을 첫 번째로 배치 */}
             <div>
               <div className="px-6 md:px-24 flex items-center gap-3 mb-4 md:mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-lg md:text-2xl font-black tracking-tight">숏폼 마케팅</h3></div>
               <HorizontalScrollContainer>{references.filter(r => r.type === 'Short-form').map(video => <VideoCard key={video.id} video={video} isShort />)}</HorizontalScrollContainer>
+            </div>
+            {/* 롱폼 기획 제작을 두 번째로 배치 */}
+            <div>
+              <div className="px-6 md:px-24 flex items-center gap-3 mb-4 md:mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-lg md:text-2xl font-black tracking-tight">롱폼 기획 제작</h3></div>
+              <HorizontalScrollContainer>{references.filter(r => r.type === 'Long-form').map(video => <VideoCard key={video.id} video={video} />)}</HorizontalScrollContainer>
             </div>
           </div>
         </section>
