@@ -253,7 +253,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLogin }) => {
       <motion.div 
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="w-full max-w-lg glass-panel p-10 md:p-16 rounded-[3rem] md:rounded-[3rem] border border-white/10"
+        className="w-full max-w-lg glass-panel p-10 md:p-16 rounded-[2.5rem] md:rounded-[3rem] border border-white/10"
       >
         <div className="flex justify-between items-center mb-10">
           <h2 className="text-2xl md:text-3xl font-black flex items-center gap-4 tracking-tight leading-[1.6] break-keep"><Lock size={28} className="text-violet-500"/> 관리 시스템 로그인</h2>
@@ -1004,7 +1004,7 @@ const App: React.FC = () => {
                     <p className="text-violet-400 text-sm md:text-base font-black mb-4 uppercase tracking-widest">채널 운영 단가</p>
                     <div className="flex items-baseline gap-3 mb-4">
                       <span className="text-gray-500 text-xl font-bold">월</span>
-                      <span className="text-4xl md:text-5xl font-black text-white">100만원</span>
+                      <span className="text-4xl md:text-5xl font-black text-white">299만원</span>
                       <span className="text-gray-500 text-lg font-bold">부터</span>
                     </div>
                     <p className="text-gray-400 text-sm md:text-base font-medium leading-[2.1] break-keep">전담 PD 매칭 및 브랜딩 영상 제작</p>
