@@ -141,9 +141,9 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
   };
 
   return (
-    <section id="live-dashboard" className="py-24 px-6 md:px-24 bg-transparent relative overflow-visible min-h-[600px] flex items-center justify-center">
+    <section id="live-dashboard" className="py-6 md:py-24 px-6 md:px-24 bg-transparent relative overflow-visible flex items-center justify-center">
       <div className="max-w-6xl w-full mx-auto relative z-10">
-        <div className="glass-panel p-8 md:p-20 rounded-[2.5rem] md:rounded-[4rem] border-white/10 shadow-2xl relative overflow-hidden bg-zinc-900/60 backdrop-blur-3xl">
+        <div className="glass-panel p-6 md:p-20 rounded-[2rem] md:rounded-[4rem] border-white/10 shadow-2xl relative overflow-hidden bg-zinc-900/60 backdrop-blur-3xl">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-violet-600/5 blur-[120px] rounded-full -mr-48 -mt-48 pointer-events-none" />
           
           <div className="absolute top-0 left-0 p-6 md:p-10 pointer-events-none z-20">
@@ -157,7 +157,7 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="space-y-16 md:space-y-24"
+              className="space-y-6 md:space-y-24"
             >
               <div className="space-y-4 text-center">
                  <h2 className="text-3xl md:text-5xl font-black leading-tight tracking-tighter break-keep">
@@ -168,55 +168,54 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
               
               <div className="flex flex-col items-center">
                 <div className="relative inline-flex items-baseline">
-                  <div className="text-7xl md:text-[10rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40 leading-none drop-shadow-2xl">
+                  <div className="text-6xl md:text-[10rem] font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40 leading-none drop-shadow-2xl">
                     {formatNumberOnly(stats.totalViews)}
                   </div>
-                  <div className="text-3xl md:text-6xl font-black text-white ml-2 md:ml-6 tracking-tighter opacity-90">
+                  <div className="text-2xl md:text-6xl font-black text-white ml-2 md:ml-6 tracking-tighter opacity-90">
                     억 뷰
                   </div>
                   <motion.div 
                     initial={{ width: 0 }}
                     whileInView={{ width: '100%' }}
                     transition={{ duration: 2, delay: 0.3 }}
-                    className="h-1 bg-gradient-to-r from-transparent via-violet-500/30 to-transparent absolute -bottom-4 md:-bottom-8 left-0"
+                    className="h-1 bg-gradient-to-r from-transparent via-violet-500/30 to-transparent absolute -bottom-2 md:-bottom-8 left-0"
                   />
                 </div>
-                <span className="text-violet-400 text-sm md:text-xl font-black mt-10 md:mt-16 tracking-widest uppercase italic opacity-60">Verified Performance</span>
+                <span className="text-violet-400 text-xs md:text-xl font-black mt-4 md:mt-16 tracking-widest uppercase italic opacity-60">Verified Performance</span>
               </div>
 
               {/* 핵심 성과 수치 카드 - 가로 정렬 */}
-              <div className="grid md:grid-cols-2 gap-6 md:gap-10 max-w-5xl mx-auto">
-                <div className="glass-panel p-8 md:p-12 rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-start justify-center hover:bg-white/10 transition-all duration-500 group">
-                  <span className="text-gray-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-4 group-hover:text-violet-400 transition-colors">국민 1인당 평균 시청</span>
-                  <div className="text-4xl md:text-7xl font-black text-white italic tracking-tighter">
+              <div className="grid md:grid-cols-2 gap-4 md:gap-10 max-w-5xl mx-auto">
+                <div className="glass-panel p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-start justify-center hover:bg-white/10 transition-all duration-500 group">
+                  <span className="text-gray-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 md:mb-4 group-hover:text-violet-400 transition-colors">국민 1인당 평균 시청</span>
+                  <div className="text-3xl md:text-7xl font-black text-white italic tracking-tighter">
                     {stats.perCapita}회
                   </div>
                 </div>
-                <div className="glass-panel p-8 md:p-12 rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-start justify-center hover:bg-white/10 transition-all duration-500 group">
-                  <span className="text-gray-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-4 group-hover:text-violet-400 transition-colors">현재 일평균 시청수</span>
-                  <div className="text-4xl md:text-7xl font-black text-white italic tracking-tighter">
+                <div className="glass-panel p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-white/5 flex flex-col items-start justify-center hover:bg-white/10 transition-all duration-500 group">
+                  <span className="text-gray-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 md:mb-4 group-hover:text-violet-400 transition-colors">현재 일평균 시청수</span>
+                  <div className="text-3xl md:text-7xl font-black text-white italic tracking-tighter">
                     {Math.floor(stats.dailyViews / 10000)}만+
                   </div>
                 </div>
               </div>
 
-              {/* 홈페이지 핵심 카피: 좌측 정렬 및 가독성 최적화 */}
-              <div className="max-w-4xl mx-auto space-y-12 md:space-y-16">
+              {/* 핵심 카피: 좌측 정렬 및 가독성 최적화 */}
+              <div className="max-w-4xl mx-auto space-y-6 md:space-y-16">
                 {CORE_HOOKS.map((hook, idx) => (
                   <motion.div 
                     key={idx}
-                    initial={{ opacity: 0, x: -40 }}
+                    initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 + idx * 0.2, type: 'spring', damping: 20 }}
-                    className="flex items-start gap-8 group"
+                    className="flex items-start gap-4 md:gap-8 group"
                   >
-                    {/* 세련된 수직 액센트 라인 */}
-                    <div className="w-1.5 h-auto min-h-[40px] md:min-h-[70px] bg-gradient-to-b from-violet-500 to-transparent rounded-full opacity-30 group-hover:opacity-100 transition-opacity shrink-0" />
+                    <div className="w-1 md:w-1.5 h-auto min-h-[30px] md:min-h-[70px] bg-gradient-to-b from-violet-500 to-transparent rounded-full opacity-30 group-hover:opacity-100 transition-opacity shrink-0" />
                     
-                    <div className="space-y-2">
-                      <p className="text-xl md:text-[2.2rem] text-white font-medium italic break-keep leading-[1.6] tracking-tight opacity-90 text-left">
+                    <div className="space-y-1">
+                      <p className="text-base md:text-[2.2rem] text-white font-medium italic break-keep leading-[1.6] tracking-tight opacity-90 text-left">
                         {hook.text}
-                        <span className="text-violet-500 font-black px-1.5 group-hover:text-violet-400 transition-colors bg-clip-text">
+                        <span className="text-violet-500 font-black px-1 md:px-1.5 group-hover:text-violet-400 transition-colors bg-clip-text">
                           {hook.highlight}
                         </span>
                         {hook.suffix}
@@ -226,7 +225,7 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
                 ))}
               </div>
 
-              <div className="flex items-center justify-center gap-4 pt-12 border-t border-white/5">
+              <div className="flex items-center justify-center gap-4 pt-6 md:pt-12 border-t border-white/5">
                 <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-gray-700 bg-white/5 px-6 py-2.5 rounded-full border border-white/5">
                   <RefreshCw size={12} className={loading ? 'animate-spin text-violet-500' : ''} />
                   실시간 통합 데이터: {stats.lastUpdated}
@@ -255,28 +254,28 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onClose, onSubmit }
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="fixed inset-0 z-[100] bg-black overflow-y-auto"
     >
-      <div className="luxury-gradient min-h-full py-24 px-6 md:px-24">
+      <div className="luxury-gradient min-h-full py-16 md:py-24 px-6 md:px-24">
         <div className="max-w-4xl mx-auto">
           <button 
             onClick={onClose}
-            className="group flex items-center gap-3 text-gray-500 hover:text-white transition-all mb-16 text-lg font-black"
+            className="group flex items-center gap-3 text-gray-500 hover:text-white transition-all mb-12 md:mb-16 text-lg font-black"
           >
             <ArrowLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
             홈으로 돌아가기
           </button>
 
-          <div className="mb-24 text-left">
-            <h2 className="text-4xl md:text-7xl font-black mb-8 leading-tight tracking-tighter break-keep italic">
+          <div className="mb-16 md:mb-24 text-left">
+            <h2 className="text-3xl md:text-7xl font-black mb-6 md:mb-8 leading-tight tracking-tighter break-keep italic">
               채널 운영 및<br/>
               <span className="text-violet-500">상품 홍보 상담하기</span>
             </h2>
-            <p className="text-xl md:text-2xl text-gray-400 font-medium leading-relaxed max-w-2xl break-keep">
+            <p className="text-lg md:text-2xl text-gray-400 font-medium leading-relaxed max-w-2xl break-keep">
               실전 전문가 집단이 당신의 비즈니스를 분석하여<br/> 
               가장 효율적인 유튜브 성장 전략을 제안해 드립니다.
             </p>
           </div>
 
-          <div className="glass-panel p-10 md:p-20 rounded-[3rem] border-white/10 shadow-2xl">
+          <div className="glass-panel p-8 md:p-20 rounded-[2rem] md:rounded-[3rem] border-white/10 shadow-2xl">
             <InquiryForm onSubmit={onSubmit} />
           </div>
         </div>
@@ -293,19 +292,19 @@ const VideoCard: React.FC<{ video: VideoReference; isShort?: boolean }> = ({ vid
   return (
     <div 
       onClick={handleOpenVideo}
-      className={`flex-shrink-0 group relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] glass-panel border border-white/5 hover:border-violet-500/40 transition-all duration-500 shadow-xl cursor-pointer ${isShort ? 'w-[220px] md:w-[260px] aspect-[9/16]' : 'w-[360px] md:w-[460px] aspect-video'}`}
+      className={`flex-shrink-0 group relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] glass-panel border border-white/5 hover:border-violet-500/40 transition-all duration-500 shadow-xl cursor-pointer ${isShort ? 'w-[180px] md:w-[260px] aspect-[9/16]' : 'w-[280px] md:w-[460px] aspect-video'}`}
     >
       <img 
         src={video.thumbnail || `https://picsum.photos/seed/${video.id}/800/450`} 
         alt={video.title} 
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
       />
-      <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-6 md:p-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent pt-16">
+      <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-5 md:p-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent pt-12 md:pt-16">
         <div className="flex justify-between items-center">
-           <h4 className="text-lg md:text-xl font-black truncate group-hover:text-violet-400 transition-colors leading-[1.6] tracking-tight break-keep">
+           <h4 className="text-sm md:text-xl font-black truncate group-hover:text-violet-400 transition-colors leading-[1.6] tracking-tight break-keep">
             {video.title}
           </h4>
-          <ExternalLink size={18} className="opacity-0 group-hover:opacity-100 transition-opacity text-violet-400 shrink-0 ml-4" />
+          <ExternalLink size={16} className="opacity-0 group-hover:opacity-100 transition-opacity text-violet-400 shrink-0 ml-4" />
         </div>
       </div>
     </div>
@@ -327,9 +326,9 @@ const HorizontalScrollContainer: React.FC<{ children: React.ReactNode }> = ({ ch
       <button onClick={() => scroll('left')} className="absolute left-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full glass-panel opacity-0 group-hover/scroll:opacity-100 transition-all hidden md:flex items-center justify-center bg-black/60 hover:bg-violet-600 border border-white/10">
         <ChevronLeft size={24} />
       </button>
-      <div ref={scrollRef} className="flex overflow-x-auto gap-6 md:gap-8 px-6 md:px-24 pb-12 no-scrollbar scroll-smooth">
+      <div ref={scrollRef} className="flex overflow-x-auto gap-4 md:gap-8 px-6 md:px-24 pb-8 md:pb-12 no-scrollbar scroll-smooth">
         {children}
-        <div className="flex-shrink-0 w-12 md:w-20" />
+        <div className="flex-shrink-0 w-8 md:w-20" />
       </div>
       <button onClick={() => scroll('right')} className="absolute right-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full glass-panel opacity-0 group-hover/scroll:opacity-100 transition-all hidden md:flex items-center justify-center bg-black/60 hover:bg-violet-600 border border-white/10">
         <ChevronRight size={24} />
@@ -434,7 +433,7 @@ const App: React.FC = () => {
       )}
 
       <main className={`relative z-10 ${isAdminMode || isConsultationPageOpen || activeLegalView ? 'hidden' : 'block'}`}>
-        <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 relative overflow-hidden bg-transparent">
+        <section className="min-h-[80vh] md:min-h-screen flex flex-col justify-center items-center text-center px-6 pb-6 md:pb-0 relative overflow-hidden bg-transparent">
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/10 pointer-events-none" />
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="relative z-10 w-full max-w-5xl">
             <h1 className="text-4xl md:text-[8vw] font-black tracking-tighter mb-6 md:mb-10 leading-[1.3] bg-clip-text text-transparent bg-gradient-to-b from-white to-white/30">{settings.heroTitle}</h1>
@@ -454,9 +453,9 @@ const App: React.FC = () => {
 
         <LiveDashboard primaryColor={settings.primaryColor} />
 
-        <section id="section-0" className="py-24 md:py-32 px-6 md:px-24 bg-transparent relative overflow-hidden">
+        <section id="section-0" className="py-6 md:py-32 px-6 md:px-24 bg-transparent relative overflow-hidden">
           <div className="max-w-6xl mx-auto relative z-10">
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20 md:mb-28 text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 md:mb-28 text-center">
               <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs md:text-sm font-black mb-6 shadow-sm">
                 <Award size={18} /> 실전 데이터로 증명합니다
               </div>
@@ -464,7 +463,7 @@ const App: React.FC = () => {
               <p className="text-base md:text-xl text-gray-500 max-w-3xl mx-auto font-medium leading-relaxed text-center">현재 대형 인플루언서 매니지먼트 및 100여 개의 자사 채널을 직접 운영하며 쌓은 독보적인 데이터로 당신의 성장을 견인합니다.</p>
             </motion.div>
 
-            <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-20 md:mb-32">
+            <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-32">
               {solutions.map((sol) => (
                 <div key={sol.id} className="glass-panel p-8 md:p-10 rounded-[2rem] hover:border-violet-500/30 transition-all duration-500 flex flex-col items-start text-left">
                   <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-6 text-violet-500">
@@ -478,67 +477,67 @@ const App: React.FC = () => {
               ))}
             </div>
 
-            <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative p-10 md:p-20 rounded-[2.5rem] md:rounded-[3.5rem] bg-zinc-900/40 backdrop-blur-sm border border-white/5 overflow-hidden">
-              <div className="relative z-10 flex flex-col lg:flex-row gap-12 md:gap-16 items-center">
+            <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative p-6 md:p-20 rounded-[2rem] md:rounded-[3.5rem] bg-zinc-900/40 backdrop-blur-sm border border-white/5 overflow-hidden">
+              <div className="relative z-10 flex flex-col lg:flex-row gap-6 md:gap-16 items-center">
                 <div className="flex-1 text-center lg:text-left">
-                  <h3 className="text-2xl md:text-4xl font-black mb-8 leading-[1.5] tracking-tighter">성과는 압도적으로,<br/><span className="text-violet-500">비용은 혁신적으로.</span></h3>
+                  <h3 className="text-2xl md:text-4xl font-black mb-4 md:mb-8 leading-[1.5] tracking-tighter">성과는 압도적으로,<br/><span className="text-violet-500">비용은 혁신적으로.</span></h3>
                   <p className="text-base md:text-lg text-gray-500 font-medium leading-relaxed">거품을 걷어낸 실전 중심의 합리적 가격 정책으로 부담 없이 최고의 성장을 경험할 수 있습니다.</p>
                 </div>
-                <div className="w-full lg:w-auto flex flex-col gap-6 md:gap-8">
-                  <div className="glass-panel p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] min-w-[240px]">
-                    <p className="text-violet-400 text-xs md:text-sm font-black mb-3 uppercase tracking-widest">채널 운영 단가</p>
-                    <div className="flex items-baseline gap-2 mb-2"><span className="text-gray-500 text-base font-bold">월</span><span className="text-3xl md:text-4xl font-black text-white">299만원</span><span className="text-gray-500 text-sm font-bold">부터</span></div>
-                    <p className="text-gray-500 text-xs md:text-sm font-medium">전담 PD 매칭 및 브랜딩 제작</p>
+                <div className="w-full lg:w-auto flex flex-col gap-4 md:gap-8">
+                  <div className="glass-panel p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] min-w-[200px] md:min-w-[240px]">
+                    <p className="text-violet-400 text-[10px] md:text-xs font-black mb-2 md:mb-3 uppercase tracking-widest">채널 운영 단가</p>
+                    <div className="flex items-baseline gap-2 mb-1 md:mb-2"><span className="text-gray-500 text-sm md:text-base font-bold">월</span><span className="text-2xl md:text-4xl font-black text-white">299만원</span><span className="text-gray-500 text-xs md:text-sm font-bold">부터</span></div>
+                    <p className="text-gray-500 text-[10px] md:text-xs font-medium">전담 PD 매칭 및 브랜딩 제작</p>
                   </div>
-                  <div className="glass-panel p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] min-w-[240px]">
-                    <p className="text-violet-400 text-xs md:text-sm font-black mb-3 uppercase tracking-widest">상품 홍보 단가</p>
-                    <div className="flex items-baseline gap-2 mb-2"><span className="text-gray-500 text-base font-bold">건당</span><span className="text-3xl md:text-4xl font-black text-white">15만원</span><span className="text-gray-500 text-sm font-bold">부터</span></div>
-                    <p className="text-gray-500 text-xs md:text-sm font-medium">제품 영상 제작 및 홍보 확산</p>
+                  <div className="glass-panel p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] min-w-[200px] md:min-w-[240px]">
+                    <p className="text-violet-400 text-[10px] md:text-xs font-black mb-2 md:mb-3 uppercase tracking-widest">상품 홍보 단가</p>
+                    <div className="flex items-baseline gap-2 mb-1 md:mb-2"><span className="text-gray-500 text-sm md:text-base font-bold">건당</span><span className="text-2xl md:text-4xl font-black text-white">15만원</span><span className="text-gray-500 text-xs md:text-sm font-bold">부터</span></div>
+                    <p className="text-gray-500 text-[10px] md:text-xs font-medium">제품 영상 제작 및 홍보 확산</p>
                   </div>
                 </div>
               </div>
-              <div className="mt-12 md:mt-16 flex justify-center">
-                <button onClick={() => setIsConsultationPageOpen(true)} className="flex items-center gap-3 px-10 py-5 md:px-12 md:py-6 rounded-full bg-violet-600 font-black text-lg md:text-xl hover:bg-violet-700 hover:scale-105 transition-all shadow-lg shadow-violet-600/20 group">상담 신청하기 <ChevronRight size={24} className="group-hover:translate-x-1.5 transition-transform" /></button>
+              <div className="mt-8 md:mt-16 flex justify-center">
+                <button onClick={() => setIsConsultationPageOpen(true)} className="flex items-center gap-2 md:gap-3 px-8 py-4 md:px-12 md:py-6 rounded-full bg-violet-600 font-black text-base md:text-xl hover:bg-violet-700 hover:scale-105 transition-all shadow-lg shadow-violet-600/20 group">상담 신청하기 <ChevronRight size={24} className="group-hover:translate-x-1.5 transition-transform" /></button>
               </div>
             </motion.div>
           </div>
         </section>
 
-        <section id="section-1" className="py-24 md:py-32 bg-transparent overflow-hidden relative text-left">
-          <div className="px-6 md:px-24 mb-12 flex items-center gap-4">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tighter italic">레퍼런스</h2>
+        <section id="section-1" className="py-6 md:py-32 bg-transparent overflow-hidden relative text-left">
+          <div className="px-6 md:px-24 mb-8 flex items-center gap-4">
+            <h2 className="text-2xl md:text-5xl font-black tracking-tighter italic">레퍼런스</h2>
             <div className="flex-1 h-px bg-white/5" />
           </div>
-          <div className="flex flex-col gap-20 md:gap-24">
+          <div className="flex flex-col gap-8 md:gap-24">
             <div>
-              <div className="px-6 md:px-24 flex items-center gap-3 mb-6 md:mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-xl md:text-2xl font-black tracking-tight">롱폼 기획 제작</h3></div>
+              <div className="px-6 md:px-24 flex items-center gap-3 mb-4 md:mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-lg md:text-2xl font-black tracking-tight">롱폼 기획 제작</h3></div>
               <HorizontalScrollContainer>{references.filter(r => r.type === 'Long-form').map(video => <VideoCard key={video.id} video={video} />)}</HorizontalScrollContainer>
             </div>
             <div>
-              <div className="px-6 md:px-24 flex items-center gap-3 mb-6 md:mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-xl md:text-2xl font-black tracking-tight">숏폼 마케팅</h3></div>
+              <div className="px-6 md:px-24 flex items-center gap-3 mb-4 md:mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-lg md:text-2xl font-black tracking-tight">숏폼 마케팅</h3></div>
               <HorizontalScrollContainer>{references.filter(r => r.type === 'Short-form').map(video => <VideoCard key={video.id} video={video} isShort />)}</HorizontalScrollContainer>
             </div>
           </div>
         </section>
 
-        <section id="section-2" className="py-24 md:py-32 px-6 md:px-24 bg-transparent relative overflow-hidden">
+        <section id="section-2" className="py-6 md:py-32 px-6 md:px-24 bg-transparent relative overflow-hidden">
           <div className="max-w-4xl mx-auto relative z-10 text-center">
-            <div className="text-center mb-12 md:mb-20">
-              <span className="inline-block px-5 py-1.5 rounded-full bg-violet-500 text-white text-[10px] md:text-xs font-black mb-6 tracking-widest shadow-md uppercase">limited event</span>
-              <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight tracking-tighter">무료 숏폼 광고 요청하기</h2>
+            <div className="text-center mb-8 md:mb-20">
+              <span className="inline-block px-5 py-1.5 rounded-full bg-violet-500 text-white text-[10px] md:text-xs font-black mb-4 md:mb-6 tracking-widest shadow-md uppercase">limited event</span>
+              <h2 className="text-3xl md:text-5xl font-black mb-4 md:mb-6 leading-tight tracking-tighter">무료 숏폼 광고 요청하기</h2>
               <p className="text-base md:text-lg text-gray-500 font-medium leading-relaxed">선착순 혜택이 곧 종료됩니다. 지금 바로 전문가의 무료 진단을 예약하세요.</p>
             </div>
             <InquiryForm onSubmit={saveInquiry} />
           </div>
         </section>
 
-        <footer className="py-16 md:py-20 border-t border-white/5 px-6 md:px-24 bg-transparent text-center relative z-10">
-          <div className="text-xl md:text-2xl font-black mb-8 tracking-tighter text-violet-500 opacity-40 leading-none">{settings.agencyName}</div>
-          <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs md:text-sm uppercase tracking-widest text-gray-700 font-black mb-10">
+        <footer className="py-12 md:py-20 border-t border-white/5 px-6 md:px-24 bg-transparent text-center relative z-10">
+          <div className="text-xl md:text-2xl font-black mb-6 md:mb-8 tracking-tighter text-violet-500 opacity-40 leading-none">{settings.agencyName}</div>
+          <div className="flex flex-wrap justify-center gap-4 md:gap-10 text-xs md:text-sm uppercase tracking-widest text-gray-700 font-black mb-8 md:mb-10">
             <button onClick={() => setActiveLegalView('terms')} className="hover:text-white transition-all">이용약관</button>
             <button onClick={() => setActiveLegalView('privacy')} className="hover:text-white transition-all">개인정보처리방침</button>
           </div>
-          <div className="text-[10px] md:text-xs text-gray-800 font-medium mb-10 space-y-1.5 leading-relaxed tracking-tight">
+          <div className="text-[10px] md:text-xs text-gray-800 font-medium mb-8 md:mb-10 space-y-1.5 leading-relaxed tracking-tight">
             <p>주식회사 마켓꾸 / 사업자등록번호 373-87-03959 / 대표자 유승용 / 서울특별시 용산구 서빙고로 17, 용산센트럴파크</p>
             <p className="opacity-40 tracking-[0.1em]">© 2024 ENTERVIBECRE. ALL RIGHTS RESERVED.</p>
           </div>
