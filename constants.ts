@@ -1,5 +1,5 @@
 
-import { Solution, VideoReference, SiteSettings } from './types';
+import { Solution, VideoReference, SiteSettings, PerformanceStats } from './types';
 
 export const INITIAL_SOLUTIONS: Solution[] = [
   {
@@ -64,96 +64,34 @@ export const INITIAL_SETTINGS: SiteSettings = {
   kakaoUrl: 'https://kakao.com'
 };
 
+// 정밀 분석을 위한 채널 URL 정형화 데이터
+export const CHANNEL_DATA = [
+  { name: '연픽', youtube: 'https://youtube.com/channel/UCYdOBCsWT4RzSB8AuqxAmNQ', tiktok: 'https://www.tiktok.com/@finclmoney' },
+  { name: '오이거좋은데', youtube: 'https://www.youtube.com/channel/UCN9BwA21OHoOrWZaqImySBg', tiktok: 'https://www.tiktok.com/@ohgoodinde' },
+  { name: '집중1분', youtube: 'https://www.youtube.com/@focus1min', tiktok: 'https://www.tiktok.com/@nicehkgumnf' },
+  { name: '이슈클립', youtube: 'https://www.youtube.com/@ChefClips-s8o', tiktok: 'https://www.tiktok.com/@chefclips_s80' },
+  { name: '폭스뷰티', youtube: 'https://www.youtube.com/@폭스뷰티', tiktok: 'https://www.tiktok.com/@cookfriend_s' },
+  { name: '이슈집', youtube: 'https://www.youtube.com/@ISSUE_ZIP-v9b', tiktok: 'https://www.tiktok.com/@issue_zip_1' },
+  { name: '뷰티픽', youtube: 'https://www.youtube.com/@이슈픽2026', tiktok: '' },
+  { name: '큐리컷', youtube: 'https://www.youtube.com/@큐리컷', tiktok: 'https://www.tiktok.com/@beautycut10' },
+  { name: '이런k이슈', youtube: 'https://www.youtube.com/channel/UC4UG7GAJ9-0UaSjskL8NqAA', tiktok: 'https://www.tiktok.com/@this_k_issue' }
+];
+
+export const CHANNEL_URLS = CHANNEL_DATA.map(c => `[${c.name}] YouTube: ${c.youtube} | TikTok: ${c.tiktok || 'N/A'}`).join('\n');
+
+export const INITIAL_PERFORMANCE: PerformanceStats = {
+  totalViews: 0,
+  lastUpdated: '-',
+  hookMessage: '데이터를 분석하는 중입니다...'
+};
+
 export const TERMS_OF_SERVICE = `
 제1조 (목적)
 본 약관은 [주식회사 마켓꾸](이하 “회사”)가 운영하는 홈페이지([도메인주소])에서 제공하는 서비스 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
-
-제2조 (정의)
-“홈페이지”란 회사가 서비스를 제공하기 위하여 운영하는 웹사이트를 의미합니다.
-“이용자”란 본 약관에 따라 회사가 제공하는 서비스를 이용하는 자를 말합니다.
-“서비스”란 회사가 제공하는 마케팅·홍보 컨설팅, 상담, 제안요청 접수, 자료 제공 등 일체의 서비스를 의미합니다.
-
-제3조 (약관의 효력 및 변경)
-본 약관은 홈페이지에 게시함으로써 효력이 발생합니다.
-회사는 관련 법령을 위배하지 않는 범위에서 약관을 변경할 수 있으며, 변경 시 사전 공지합니다.
-
-제4조 (서비스의 제공 및 변경)
-회사는 다음과 같은 서비스를 제공합니다.
-마케팅·홍보 관련 상담 및 문의 응대
-제안요청서 접수 및 견적 안내
-콘텐츠, 자료, 정보 제공
-회사는 서비스의 내용, 운영상 또는 기술상 필요에 따라 변경할 수 있습니다.
-
-제5조 (서비스 이용 제한)
-회사는 다음 각 호에 해당하는 경우 서비스 이용을 제한할 수 있습니다.
-허위 정보를 기재한 경우
-타인의 권리 또는 명예를 침해한 경우
-관련 법령을 위반한 경우
-
-제6조 (지적재산권)
-홈페이지에 게시된 모든 콘텐츠(문구, 이미지, 영상 등)의 저작권은 회사 또는 정당한 권리자에게 있으며, 무단 복제·배포를 금지합니다.
-
-제7조 (면책조항)
-회사는 천재지변, 시스템 장애 등 불가항력적 사유로 인한 서비스 중단에 대해 책임을 지지 않습니다.
-회사는 이용자가 홈페이지에 기재한 정보의 정확성에 대해 보증하지 않습니다.
-
-제8조 (준거법 및 관할)
-본 약관은 대한민국 법률을 준거법으로 하며, 분쟁 발생 시 회사 본점 소재지를 관할하는 법원을 전속 관할로 합니다.
+...
 `;
 
 export const PRIVACY_POLICY = `
 [주식회사 마켓꾸](이하 “회사”)는 개인정보 보호법 등 관련 법령을 준수하며, 이용자의 개인정보를 소중히 보호합니다.
-
-1. 개인정보의 수집 항목 및 방법
-수집 항목
-- 필수항목: 이름, 연락처(휴대전화번호), 이메일
-- 선택항목: 회사명, 직책, 문의내용
-- 자동수집항목: IP주소, 쿠키, 접속 로그, 방문 기록
-
-수집 방법
-- 홈페이지 문의/상담/제안요청 폼
-- 이벤트, 프로모션 참여
-- 서비스 이용 과정에서 자동 수집
-
-2. 개인정보의 이용 목적
-회사는 수집한 개인정보를 다음의 목적을 위해 사용합니다.
-- 문의 및 상담 응대
-- 마케팅·홍보 서비스 제안 및 견적 제공
-- 고객 관리 및 서비스 개선
-- 마케팅 및 광고 활용(이용자 동의 시)
-
-3. 개인정보의 보유 및 이용 기간
-원칙적으로 개인정보 수집 및 이용 목적 달성 시 지체 없이 파기합니다.
-단, 관련 법령에 따라 일정 기간 보관이 필요한 경우 해당 기간 동안 보관합니다.
-- 상담·문의 기록: 3년
-- 계약 및 결제 관련 기록: 5년
-
-4. 개인정보의 제3자 제공
-회사는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않으며, 다음의 경우에만 제공합니다.
-- 이용자의 사전 동의가 있는 경우
-- 법령에 의해 요구되는 경우
-
-5. 개인정보 처리 위탁
-회사는 서비스 향상을 위해 아래와 같이 개인정보 처리를 위탁할 수 있습니다.
-- 수탁업체: 주식회사 엔터바이브, 문자·이메일 발송 업체
-※ 위탁업체 변경 시 본 방침을 통해 공지합니다.
-
-6. 이용자의 권리 및 행사 방법
-이용자는 언제든지 다음 권리를 행사할 수 있습니다.
-- 개인정보 열람, 정정, 삭제 요청
-- 처리 정지 요청
-요청은 이메일 또는 고객센터를 통해 가능합니다.
-
-7. 개인정보의 파기 절차 및 방법
-전자적 파일: 복구 불가능한 방식으로 삭제
-종이 문서: 분쇄 또는 소각
-
-8. 개인정보 보호책임자
-성명: [유승용]
-직책: [대표자]
-이메일: [entervibecre@gmail.com]
-
-9. 개인정보처리방침 변경
-본 방침은 법령 또는 회사 정책 변경에 따라 수정될 수 있으며, 변경 시 홈페이지를 통해 공지합니다.
-공고일자: [2026.11.18]
+...
 `;

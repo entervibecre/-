@@ -34,4 +34,10 @@ export interface SiteSettings {
   kakaoUrl: string;
 }
 
+export interface PerformanceStats {
+  totalViews: number;
+  lastUpdated: string;
+  hookMessage: string;
+}
+
 export type AdminTab = 'content' | 'appearance' | 'leads';
