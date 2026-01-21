@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { 
   Video, BarChart3, Layout, Instagram, Youtube, MessageCircle, 
@@ -238,8 +237,8 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
               </div>
 
               <div className="flex items-center justify-center gap-4 pt-6 md:pt-12 border-t border-white/5">
-                <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-gray-700 bg-white/5 px-6 py-2.5 rounded-full border border-white/5">
-                  <RefreshCw size={12} className={loading ? 'animate-spin text-violet-500' : ''} />
+                <div className="flex items-center gap-3 text-xs md:text-sm font-black text-white bg-white/10 px-8 py-3 rounded-full border border-white/20 shadow-lg backdrop-blur-md">
+                  <RefreshCw size={14} className={loading ? 'animate-spin text-violet-500' : 'text-violet-400'} />
                   실시간 통합 데이터: {stats.lastUpdated}
                 </div>
               </div>
@@ -448,7 +447,8 @@ const App: React.FC = () => {
         <section className="min-h-[80vh] md:min-h-screen flex flex-col justify-center items-center text-center px-6 pb-6 md:pb-0 relative overflow-hidden bg-transparent">
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/10 pointer-events-none" />
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="relative z-10 w-full max-w-5xl">
-            <h1 className="text-4xl md:text-[8vw] font-black tracking-tighter mb-6 md:mb-10 leading-[1.3] bg-clip-text text-transparent bg-gradient-to-b from-white to-white/30">{settings.heroTitle}</h1>
+            {/* 잘림 현상 방지를 위해 pr-4 및 leading 조정 */}
+            <h1 className="text-4xl md:text-[8vw] font-black tracking-tighter mb-6 md:mb-10 leading-[1.4] bg-clip-text text-transparent bg-gradient-to-b from-white to-white/30 pr-4">{settings.heroTitle}</h1>
             <div className="space-y-4 md:space-y-8 mb-10 md:mb-16">
               {settings.heroSlogan.split(',').map((text, idx) => (
                 <motion.p key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + idx * 0.15 }} className={`text-lg md:text-4xl font-bold tracking-tight leading-relaxed ${idx === 1 ? 'text-white' : 'text-white/40'}`}>
@@ -577,7 +577,7 @@ const LoginModal: React.FC<{ onClose: () => void; onLogin: (id: string, pw: stri
   const [pw, setPw] = useState('');
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex items-center justify-center p-6">
-      <div className="w-full max-sm glass-panel p-10 rounded-[2.5rem] border border-white/10">
+      <div className="w-full max-w-sm glass-panel p-10 rounded-[2.5rem] border border-white/10">
         <h2 className="text-xl font-black mb-8">관리자 로그인</h2>
         <input className="w-full bg-zinc-950 p-4 rounded-xl mb-4 text-sm border border-white/5" placeholder="아이디" value={id} onChange={e => setId(e.target.value)} />
         <input className="w-full bg-zinc-950 p-4 rounded-xl mb-6 text-sm border border-white/5" type="password" placeholder="비밀번호" value={pw} onChange={e => setPw(e.target.value)} />
