@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { 
   Video, BarChart3, Layout, Instagram, Youtube, MessageCircle, 
   Settings, ChevronRight, X, Plus, Trash2, Edit2, Check, Download,
-  Menu, Play, Lock, User, ChevronLeft, TrendingUp, Users, Award, AlertCircle, Loader2, ExternalLink, Image as ImageIcon, Upload, ArrowLeft, Zap, RefreshCw, PlusCircle, Save
+  Menu, Play, Lock, User, ChevronLeft, TrendingUp, Users, Award, AlertCircle, Loader2, ExternalLink, Image as ImageIcon, Upload, ArrowLeft, Zap, RefreshCw, PlusCircle, Save, LogOut, Eye, EyeOff
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { GoogleGenAI } from "@google/genai";
@@ -14,14 +14,122 @@ import {
   INITIAL_SOLUTIONS, INITIAL_REFERENCES, INITIAL_SETTINGS, CHANNEL_URLS, INITIAL_PERFORMANCE, CORE_HOOKS
 } from './constants';
 
+// --- Admin Login Modal ---
+interface AdminLoginModalProps {
+  onLoginSuccess: () => void;
+  onClose: () => void;
+}
+
+const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onLoginSuccess, onClose }) => {
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    setError('');
+
+    // 사용자 지정 자격 증명
+    if (userId === 'entervibecre' && password === 'PLMokn12#$') {
+      setTimeout(() => {
+        onLoginSuccess();
+        setIsLoggingIn(false);
+      }, 600);
+    } else {
+      setTimeout(() => {
+        setError('아이디 또는 비밀번호가 일치하지 않습니다.');
+        setIsLoggingIn(false);
+      }, 600);
+    }
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex items-center justify-center p-6"
+    >
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        className="bg-zinc-900 border border-white/10 w-full max-w-md rounded-[2.5rem] p-10 md:p-12 shadow-2xl relative overflow-hidden"
+      >
+        <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600/10 blur-[50px] -mr-16 -mt-16" />
+        
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-white/5 rounded-full transition-all">
+          <X size={20} className="text-gray-500" />
+        </button>
+
+        <div className="text-center mb-10">
+          <div className="w-16 h-16 bg-violet-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Lock className="text-violet-500" size={32} />
+          </div>
+          <h2 className="text-2xl font-black italic mb-2 tracking-tighter">Admin Access</h2>
+          <p className="text-gray-500 text-sm">콘텐츠 수정을 위해 관리자 로그인이 필요합니다.</p>
+        </div>
+
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">Admin ID</label>
+            <input 
+              required
+              autoFocus
+              type="text"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              className="w-full bg-black border border-white/10 rounded-2xl p-4 text-base focus:border-violet-500 outline-none transition-all"
+              placeholder="아이디를 입력하세요"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">Password</label>
+            <div className="relative">
+              <input 
+                required
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-black border border-white/10 rounded-2xl p-4 pr-12 text-base focus:border-violet-500 outline-none transition-all"
+                placeholder="••••••••"
+              />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-red-500 text-xs font-bold text-center">
+              {error}
+            </motion.p>
+          )}
+
+          <button 
+            disabled={isLoggingIn}
+            className="w-full py-4 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-600/20"
+          >
+            {isLoggingIn ? <Loader2 className="animate-spin" size={20} /> : '관리자 접속'}
+          </button>
+        </form>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 // --- Reference Manager Component ---
 interface ReferenceManagerProps {
   references: VideoReference[];
   onSave: (refs: VideoReference[]) => void;
   onClose: () => void;
+  onLogout: () => void;
 }
 
-const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave, onClose }) => {
+const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave, onClose, onLogout }) => {
   const [localRefs, setLocalRefs] = useState<VideoReference[]>(references);
 
   const addReference = () => {
@@ -66,6 +174,9 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
             <p className="text-gray-500 text-xs md:text-sm mt-1">수정사항은 브라우저에 즉시 저장됩니다.</p>
           </div>
           <div className="flex gap-2 md:gap-3">
+            <button onClick={onLogout} className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-500 text-[10px] md:text-xs font-bold transition-all border border-red-500/20">
+              <LogOut size={14} /> 로그아웃
+            </button>
             <button onClick={exportData} className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 text-[10px] md:text-xs font-bold transition-all">
               <Download size={14} /> 내보내기
             </button>
@@ -231,7 +342,6 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onSubmit }) => {
 const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => {
   const [stats, setStats] = useState<PerformanceStats>(INITIAL_PERFORMANCE);
   const [loading, setLoading] = useState(false);
-  // Store grounding chunks to display URLs as required by guidelines
   const [sources, setSources] = useState<any[]>([]);
 
   const fetchRealtimeStats = async () => {
@@ -241,7 +351,6 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
     setLoading(true);
     try {
       const ai = new GoogleGenAI({ apiKey });
-      // Fix: Follow Search Grounding rules (no responseMimeType when using googleSearch, and display chunks)
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: `Analyze these channels: ${CHANNEL_URLS}. Return sum of total views, daily views, and per-capita reach.`,
@@ -257,9 +366,6 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
       }
 
       if (text) {
-        // Since we shouldn't assume response.text is JSON when using googleSearch,
-        // we update the timestamp but keep initial performance stats for UI consistency
-        // as the actual view numbers are high-level summaries.
         setStats(prev => ({ ...prev, lastUpdated: new Date().toLocaleTimeString('ko-KR') }));
       }
     } catch (e) {
@@ -338,7 +444,6 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
                 </div>
               </div>
 
-              {/* Display Grounding Sources */}
               {sources.length > 0 && (
                 <div className="max-w-4xl mx-auto p-4 md:p-8 rounded-[1.5rem] border border-white/10 bg-white/5 backdrop-blur-md">
                   <h4 className="text-[10px] md:text-xs font-black uppercase tracking-widest text-violet-400 mb-4 flex items-center gap-2">
@@ -442,7 +547,6 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onClose, onSubmit }
             </p>
           </div>
           <div className="glass-panel p-8 md:p-20 rounded-[2rem] md:rounded-[3rem] border-white/10 shadow-2xl">
-            {/* Fix: use the passed onSubmit prop instead of undefined saveInquiry */}
             <InquiryForm onSubmit={onSubmit} />
           </div>
         </div>
@@ -515,11 +619,18 @@ const StarBackground: React.FC<{ springX: any; springY: any }> = ({ springX, spr
 
 const App: React.FC = () => {
   const [isConsultationPageOpen, setIsConsultationPageOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRefManagerOpen, setIsRefManagerOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [references, setReferences] = useState<VideoReference[]>([]);
 
-  // 데이터 로드
+  // 세션 체크 (새로고침 전까지 로그인 유지)
   useEffect(() => {
+    const adminSession = sessionStorage.getItem('entervibe_admin');
+    if (adminSession === 'true') {
+      setIsAdmin(true);
+    }
+
     const saved = localStorage.getItem('entervibe_refs');
     if (saved) {
       try {
@@ -531,6 +642,27 @@ const App: React.FC = () => {
       setReferences(INITIAL_REFERENCES);
     }
   }, []);
+
+  const handleLoginSuccess = () => {
+    setIsAdmin(true);
+    setIsLoginModalOpen(false);
+    setIsRefManagerOpen(true);
+    sessionStorage.setItem('entervibe_admin', 'true');
+  };
+
+  const handleLogout = () => {
+    setIsAdmin(false);
+    setIsRefManagerOpen(false);
+    sessionStorage.removeItem('entervibe_admin');
+  };
+
+  const handleOpenAdmin = () => {
+    if (isAdmin) {
+      setIsRefManagerOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
+    }
+  };
 
   const saveReferences = (newRefs: VideoReference[]) => {
     setReferences(newRefs);
@@ -613,12 +745,12 @@ const App: React.FC = () => {
               <div className="hidden md:block w-32 h-px bg-white/5" />
             </div>
             <button 
-              onClick={() => setIsRefManagerOpen(true)}
-              className="p-2 md:p-3 rounded-full bg-white/5 border border-white/10 text-gray-500 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2"
+              onClick={handleOpenAdmin}
+              className={`p-2 md:p-3 rounded-full border transition-all flex items-center gap-2 ${isAdmin ? 'bg-violet-600/20 border-violet-500 text-violet-400' : 'bg-white/5 border-white/10 text-gray-500 hover:text-white hover:bg-white/10'}`}
               title="레퍼런스 관리"
             >
-              <Settings size={20} />
-              <span className="hidden md:inline text-xs font-bold">관리</span>
+              {isAdmin ? <Lock size={20} /> : <Settings size={20} />}
+              <span className="hidden md:inline text-xs font-bold">{isAdmin ? '관리중' : '관리'}</span>
             </button>
           </div>
           <div className="space-y-24">
@@ -655,7 +787,8 @@ const App: React.FC = () => {
 
       <AnimatePresence>
         {isConsultationPageOpen && <ConsultationPage onClose={() => setIsConsultationPageOpen(false)} onSubmit={saveInquiry} />}
-        {isRefManagerOpen && <ReferenceManager references={references} onSave={saveReferences} onClose={() => setIsRefManagerOpen(false)} />}
+        {isLoginModalOpen && <AdminLoginModal onLoginSuccess={handleLoginSuccess} onClose={() => setIsLoginModalOpen(false)} />}
+        {isRefManagerOpen && <ReferenceManager references={references} onSave={saveReferences} onClose={() => setIsRefManagerOpen(false)} onLogout={handleLogout} />}
       </AnimatePresence>
     </div>
   );
