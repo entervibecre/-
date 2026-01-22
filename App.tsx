@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { 
   Video, BarChart3, Layout, Instagram, Youtube, MessageCircle, 
   Settings, ChevronRight, X, Plus, Trash2, Edit2, Check, Download,
-  Menu, Play, Lock, User, ChevronLeft, TrendingUp, Users, Award, AlertCircle, Loader2, ExternalLink, Image as ImageIcon, Upload, ArrowLeft, Zap, RefreshCw, PlusCircle, Save, LogOut, Eye, EyeOff
+  Menu, Play, Lock, User, ChevronLeft, TrendingUp, Users, Award, AlertCircle, Loader2, ExternalLink, Image as ImageIcon, Upload, ArrowLeft, Zap, RefreshCw, PlusCircle, Save, LogOut, Eye, EyeOff, FileImage
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { GoogleGenAI } from "@google/genai";
@@ -138,13 +138,25 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
       type: 'Short-form',
       title: '새로운 영상 제목',
       embedUrl: '',
-      thumbnail: 'https://picsum.photos/seed/' + Math.random() + '/800/450'
+      thumbnail: '' // 초기값 비움
     };
     setLocalRefs([newRef, ...localRefs]);
   };
 
   const updateRef = (id: string, field: keyof VideoReference, value: string) => {
     setLocalRefs(localRefs.map(r => r.id === id ? { ...r, [field]: value } : r));
+  };
+
+  const handleImageUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        updateRef(id, 'thumbnail', base64String);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const deleteRef = (id: string) => {
@@ -171,7 +183,7 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
         <div className="p-6 md:p-8 border-b border-white/5 flex justify-between items-center">
           <div>
             <h2 className="text-xl md:text-2xl font-black italic">레퍼런스 데이터 관리</h2>
-            <p className="text-gray-500 text-xs md:text-sm mt-1">수정사항은 브라우저에 즉시 저장됩니다.</p>
+            <p className="text-gray-500 text-xs md:text-sm mt-1">이미지는 로컬 스토리지에 저장되므로 너무 큰 파일은 지양해주세요.</p>
           </div>
           <div className="flex gap-2 md:gap-3">
             <button onClick={onLogout} className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-500 text-[10px] md:text-xs font-bold transition-all border border-red-500/20">
@@ -226,13 +238,27 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">썸네일 이미지 URL</label>
-                  <input 
-                    value={ref.thumbnail}
-                    onChange={(e) => updateRef(ref.id, 'thumbnail', e.target.value)}
-                    className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm focus:border-violet-500 outline-none"
-                    placeholder="https://..."
-                  />
+                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">썸네일 이미지 업로드</label>
+                  <div className="flex items-center gap-4">
+                    <div className={`w-24 h-16 rounded-lg bg-black border border-white/10 flex items-center justify-center overflow-hidden shrink-0 ${!ref.thumbnail && 'border-dashed'}`}>
+                      {ref.thumbnail ? (
+                        <img src={ref.thumbnail} className="w-full h-full object-cover" alt="미리보기" />
+                      ) : (
+                        <ImageIcon size={20} className="text-gray-700" />
+                      )}
+                    </div>
+                    <label className="flex-1">
+                      <div className="cursor-pointer w-full bg-black border border-white/10 rounded-xl p-3 text-sm hover:border-violet-500 transition-all flex items-center justify-center gap-2 font-bold text-gray-400 hover:text-white">
+                        <Upload size={16} /> 이미지 선택
+                      </div>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={(e) => handleImageUpload(ref.id, e)} 
+                        className="hidden" 
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-end">
@@ -561,7 +587,13 @@ const VideoCard: React.FC<{ video: VideoReference; isShort?: boolean }> = ({ vid
       onClick={() => video.embedUrl && window.open(video.embedUrl, '_blank')}
       className={`flex-shrink-0 group relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] glass-panel border border-white/5 hover:border-violet-500/40 transition-all duration-500 shadow-xl cursor-pointer ${isShort ? 'w-[180px] md:w-[260px] aspect-[9/16]' : 'w-[280px] md:w-[460px] aspect-video'}`}
     >
-      <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+      {video.thumbnail ? (
+        <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+      ) : (
+        <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
+          <FileImage size={40} className="text-zinc-800" />
+        </div>
+      )}
       <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-5 md:p-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent pt-12 md:pt-16">
         <div className="flex justify-between items-center">
            <h4 className="text-sm md:text-xl font-black truncate group-hover:text-violet-400 transition-colors leading-[1.6] tracking-tight break-keep">{video.title}</h4>
