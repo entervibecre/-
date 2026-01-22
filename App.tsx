@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { 
   Video, BarChart3, Layout, Instagram, Youtube, MessageCircle, 
   Settings, ChevronRight, X, Plus, Trash2, Edit2, Check, Download,
-  Menu, Play, Lock, User, ChevronLeft, TrendingUp, Users, Award, AlertCircle, Loader2, ExternalLink, Image as ImageIcon, Upload, ArrowLeft, Zap, RefreshCw, PlusCircle, Save, LogOut, Eye, EyeOff, FileImage
+  Menu, Play, Lock, User, ChevronLeft, TrendingUp, Users, Award, AlertCircle, Loader2, ExternalLink, Image as ImageIcon, Upload, ArrowLeft, Zap, RefreshCw, PlusCircle, Save, LogOut, Eye, EyeOff, FileImage, ChevronUp, ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { GoogleGenAI } from "@google/genai";
@@ -32,7 +32,6 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onLoginSuccess, onClo
     setIsLoggingIn(true);
     setError('');
 
-    // 사용자 지정 자격 증명
     if (userId === 'entervibecre' && password === 'PLMokn12#$') {
       setTimeout(() => {
         onLoginSuccess();
@@ -56,11 +55,9 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onLoginSuccess, onClo
         className="bg-zinc-900 border border-white/10 w-full max-w-md rounded-[2.5rem] p-10 md:p-12 shadow-2xl relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600/10 blur-[50px] -mr-16 -mt-16" />
-        
         <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-white/5 rounded-full transition-all">
           <X size={20} className="text-gray-500" />
         </button>
-
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-violet-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Lock className="text-violet-500" size={32} />
@@ -68,7 +65,6 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onLoginSuccess, onClo
           <h2 className="text-2xl font-black italic mb-2 tracking-tighter">Admin Access</h2>
           <p className="text-gray-500 text-sm">콘텐츠 수정을 위해 관리자 로그인이 필요합니다.</p>
         </div>
-
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">Admin ID</label>
@@ -102,17 +98,8 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onLoginSuccess, onClo
               </button>
             </div>
           </div>
-
-          {error && (
-            <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-red-500 text-xs font-bold text-center">
-              {error}
-            </motion.p>
-          )}
-
-          <button 
-            disabled={isLoggingIn}
-            className="w-full py-4 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-600/20"
-          >
+          {error && <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-red-500 text-xs font-bold text-center">{error}</motion.p>}
+          <button disabled={isLoggingIn} className="w-full py-4 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-600/20">
             {isLoggingIn ? <Loader2 className="animate-spin" size={20} /> : '관리자 접속'}
           </button>
         </form>
@@ -131,14 +118,15 @@ interface ReferenceManagerProps {
 
 const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave, onClose, onLogout }) => {
   const [localRefs, setLocalRefs] = useState<VideoReference[]>(references);
+  const [activeTab, setActiveTab] = useState<'Short-form' | 'Long-form'>('Short-form');
 
   const addReference = () => {
     const newRef: VideoReference = {
       id: `ref_${Date.now()}`,
-      type: 'Short-form',
+      type: activeTab,
       title: '새로운 영상 제목',
       embedUrl: '',
-      thumbnail: '' // 초기값 비움
+      thumbnail: ''
     };
     setLocalRefs([newRef, ...localRefs]);
   };
@@ -160,7 +148,33 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
   };
 
   const deleteRef = (id: string) => {
-    setLocalRefs(localRefs.filter(r => r.id !== id));
+    if (confirm('정말 삭제하시겠습니까?')) {
+      setLocalRefs(localRefs.filter(r => r.id !== id));
+    }
+  };
+
+  const moveItem = (id: string, direction: 'up' | 'down') => {
+    // 탭 내에서의 상대적 순서를 변경하기 위해 전체 리스트에서 인덱스를 찾음
+    const index = localRefs.findIndex(r => r.id === id);
+    if (index === -1) return;
+
+    // 현재 탭의 데이터만 필터링한 인덱스 계산 (더 직관적인 이동을 위해)
+    const filteredRefs = localRefs.filter(r => r.type === activeTab);
+    const filteredIndex = filteredRefs.findIndex(r => r.id === id);
+
+    if (direction === 'up' && filteredIndex > 0) {
+      const targetId = filteredRefs[filteredIndex - 1].id;
+      const targetIndex = localRefs.findIndex(r => r.id === targetId);
+      const newList = [...localRefs];
+      [newList[index], newList[targetIndex]] = [newList[targetIndex], newList[index]];
+      setLocalRefs(newList);
+    } else if (direction === 'down' && filteredIndex < filteredRefs.length - 1) {
+      const targetId = filteredRefs[filteredIndex + 1].id;
+      const targetIndex = localRefs.findIndex(r => r.id === targetId);
+      const newList = [...localRefs];
+      [newList[index], newList[targetIndex]] = [newList[targetIndex], newList[index]];
+      setLocalRefs(newList);
+    }
   };
 
   const handleSave = () => {
@@ -168,11 +182,7 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
     onClose();
   };
 
-  const exportData = () => {
-    const json = JSON.stringify(localRefs, null, 2);
-    navigator.clipboard.writeText(json);
-    alert('데이터가 클립보드에 복사되었습니다. constants.ts의 INITIAL_REFERENCES에 붙여넣어 영구 보관할 수 있습니다.');
-  };
+  const currentRefs = localRefs.filter(r => r.type === activeTab);
 
   return (
     <motion.div 
@@ -180,99 +190,119 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
       className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 md:p-6"
     >
       <div className="bg-zinc-900 border border-white/10 w-full max-w-4xl max-h-[90vh] rounded-[2rem] overflow-hidden flex flex-col shadow-2xl">
-        <div className="p-6 md:p-8 border-b border-white/5 flex justify-between items-center">
+        <div className="p-6 md:p-8 border-b border-white/5 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-black/20">
           <div>
-            <h2 className="text-xl md:text-2xl font-black italic">레퍼런스 데이터 관리</h2>
-            <p className="text-gray-500 text-xs md:text-sm mt-1">이미지는 로컬 스토리지에 저장되므로 너무 큰 파일은 지양해주세요.</p>
+            <h2 className="text-xl md:text-2xl font-black italic">콘텐츠 마스터 센터</h2>
+            <p className="text-gray-500 text-[10px] md:text-xs mt-1 uppercase tracking-widest font-bold">Category & Order Management</p>
           </div>
-          <div className="flex gap-2 md:gap-3">
-            <button onClick={onLogout} className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-500 text-[10px] md:text-xs font-bold transition-all border border-red-500/20">
+          <div className="flex gap-2 w-full md:w-auto">
+            <button onClick={onLogout} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 text-[10px] md:text-xs font-bold transition-all border border-red-500/20">
               <LogOut size={14} /> 로그아웃
             </button>
-            <button onClick={exportData} className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 text-[10px] md:text-xs font-bold transition-all">
-              <Download size={14} /> 내보내기
-            </button>
-            <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-all">
+            <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-all hidden md:block">
               <X size={24} />
             </button>
           </div>
         </div>
-        
-        <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
-          <button onClick={addReference} className="w-full py-4 border-2 border-dashed border-white/10 rounded-2xl flex items-center justify-center gap-2 text-gray-500 hover:text-white hover:border-violet-500/50 transition-all font-bold">
-            <PlusCircle size={20} /> 새로운 레퍼런스 추가
+
+        {/* Tabs Interface */}
+        <div className="flex border-b border-white/5 bg-black/10">
+          <button 
+            onClick={() => setActiveTab('Short-form')}
+            className={`flex-1 py-4 md:py-6 text-sm font-black transition-all border-b-2 ${activeTab === 'Short-form' ? 'text-violet-500 border-violet-500 bg-violet-500/5' : 'text-gray-500 border-transparent hover:text-gray-300'}`}
+          >
+            숏폼 (Short-form)
           </button>
-          
-          {localRefs.map((ref) => (
-            <div key={ref.id} className="bg-white/5 p-4 md:p-6 rounded-2xl border border-white/5 space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">영상 타입</label>
-                  <select 
-                    value={ref.type}
-                    onChange={(e) => updateRef(ref.id, 'type', e.target.value as any)}
-                    className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm focus:border-violet-500 outline-none"
-                  >
-                    <option value="Short-form">Short-form (9:16)</option>
-                    <option value="Long-form">Long-form (16:9)</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">영상 제목</label>
-                  <input 
-                    value={ref.title}
-                    onChange={(e) => updateRef(ref.id, 'title', e.target.value)}
-                    className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm focus:border-violet-500 outline-none"
-                    placeholder="제목 입력"
-                  />
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">YouTube Embed URL</label>
-                  <input 
-                    value={ref.embedUrl}
-                    onChange={(e) => updateRef(ref.id, 'embedUrl', e.target.value)}
-                    className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm focus:border-violet-500 outline-none"
-                    placeholder="https://www.youtube.com/embed/..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">썸네일 이미지 업로드</label>
-                  <div className="flex items-center gap-4">
-                    <div className={`w-24 h-16 rounded-lg bg-black border border-white/10 flex items-center justify-center overflow-hidden shrink-0 ${!ref.thumbnail && 'border-dashed'}`}>
-                      {ref.thumbnail ? (
-                        <img src={ref.thumbnail} className="w-full h-full object-cover" alt="미리보기" />
-                      ) : (
-                        <ImageIcon size={20} className="text-gray-700" />
-                      )}
-                    </div>
-                    <label className="flex-1">
-                      <div className="cursor-pointer w-full bg-black border border-white/10 rounded-xl p-3 text-sm hover:border-violet-500 transition-all flex items-center justify-center gap-2 font-bold text-gray-400 hover:text-white">
-                        <Upload size={16} /> 이미지 선택
-                      </div>
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={(e) => handleImageUpload(ref.id, e)} 
-                        className="hidden" 
-                      />
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <button onClick={() => deleteRef(ref.id)} className="flex items-center gap-1 text-red-500 hover:text-red-400 text-xs font-bold transition-all">
-                  <Trash2 size={14} /> 삭제하기
-                </button>
-              </div>
-            </div>
-          ))}
+          <button 
+            onClick={() => setActiveTab('Long-form')}
+            className={`flex-1 py-4 md:py-6 text-sm font-black transition-all border-b-2 ${activeTab === 'Long-form' ? 'text-violet-500 border-violet-500 bg-violet-500/5' : 'text-gray-500 border-transparent hover:text-gray-300'}`}
+          >
+            롱폼 (Long-form)
+          </button>
         </div>
         
-        <div className="p-6 md:p-8 border-t border-white/5 bg-black/20 flex justify-end gap-4">
-          <button onClick={onClose} className="px-6 py-2 md:px-8 md:py-3 rounded-full font-bold text-gray-400 hover:text-white transition-all text-sm md:text-base">취소</button>
-          <button onClick={handleSave} className="px-8 py-2 md:px-10 md:py-3 rounded-full bg-violet-600 hover:bg-violet-700 font-black flex items-center gap-2 transition-all text-sm md:text-base">
+        <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar">
+          <button onClick={addReference} className="w-full py-4 border-2 border-dashed border-white/10 rounded-2xl flex items-center justify-center gap-2 text-gray-500 hover:text-white hover:border-violet-500/50 transition-all font-bold bg-white/5">
+            <PlusCircle size={20} /> {activeTab === 'Short-form' ? '숏폼' : '롱폼'} 영상 추가
+          </button>
+          
+          <div className="space-y-4">
+            {currentRefs.length === 0 ? (
+              <div className="py-20 text-center text-gray-600 font-bold italic">등록된 영상이 없습니다.</div>
+            ) : (
+              currentRefs.map((ref, idx) => (
+                <div key={ref.id} className="bg-white/5 p-4 md:p-6 rounded-2xl border border-white/5 space-y-4 group hover:bg-white/[0.07] transition-all relative">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center text-[10px] font-black">{idx + 1}</div>
+                      <span className="text-xs font-black text-gray-500 uppercase tracking-tighter">Order #{idx + 1}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => moveItem(ref.id, 'up')} className="p-1.5 rounded-lg bg-black border border-white/5 text-gray-400 hover:text-violet-400 transition-colors" title="위로">
+                        <ChevronUp size={16} />
+                      </button>
+                      <button onClick={() => moveItem(ref.id, 'down')} className="p-1.5 rounded-lg bg-black border border-white/5 text-gray-400 hover:text-violet-400 transition-colors" title="아래로">
+                        <ChevronDown size={16} />
+                      </button>
+                      <button onClick={() => deleteRef(ref.id)} className="p-1.5 rounded-lg bg-black border border-white/5 text-red-500/70 hover:text-red-500 transition-colors ml-2" title="삭제">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">영상 제목</label>
+                      <input 
+                        value={ref.title}
+                        onChange={(e) => updateRef(ref.id, 'title', e.target.value)}
+                        className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm focus:border-violet-500 outline-none transition-all font-bold"
+                        placeholder="제목 입력"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">YouTube Embed URL</label>
+                      <input 
+                        value={ref.embedUrl}
+                        onChange={(e) => updateRef(ref.id, 'embedUrl', e.target.value)}
+                        className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm focus:border-violet-500 outline-none transition-all"
+                        placeholder="https://www.youtube.com/embed/..."
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1">썸네일 이미지 업로드</label>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-24 md:w-32 h-16 md:h-20 rounded-xl bg-black border border-white/10 flex items-center justify-center overflow-hidden shrink-0 ${!ref.thumbnail && 'border-dashed'}`}>
+                        {ref.thumbnail ? (
+                          <img src={ref.thumbnail} className="w-full h-full object-cover" alt="미리보기" />
+                        ) : (
+                          <ImageIcon size={20} className="text-gray-700" />
+                        )}
+                      </div>
+                      <label className="flex-1">
+                        <div className="cursor-pointer w-full bg-black border border-white/10 rounded-xl p-3 md:p-4 text-xs md:text-sm hover:border-violet-500 transition-all flex items-center justify-center gap-2 font-black text-gray-400 hover:text-white">
+                          <Upload size={16} /> 이미지 선택
+                        </div>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          onChange={(e) => handleImageUpload(ref.id, e)} 
+                          className="hidden" 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+        
+        <div className="p-6 md:p-8 border-t border-white/5 bg-black/40 flex justify-end gap-3">
+          <button onClick={onClose} className="px-6 py-2 md:px-8 md:py-3 rounded-xl font-bold text-gray-400 hover:text-white transition-all text-sm">닫기</button>
+          <button onClick={handleSave} className="px-8 py-2 md:px-10 md:py-3 rounded-xl bg-violet-600 hover:bg-violet-700 font-black flex items-center gap-2 transition-all text-sm shadow-lg shadow-violet-600/20">
             <Save size={18} /> 설정 저장하기
           </button>
         </div>
@@ -368,7 +398,6 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onSubmit }) => {
 const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => {
   const [stats, setStats] = useState<PerformanceStats>(INITIAL_PERFORMANCE);
   const [loading, setLoading] = useState(false);
-  const [sources, setSources] = useState<any[]>([]);
 
   const fetchRealtimeStats = async () => {
     const apiKey = process.env.API_KEY;
@@ -386,11 +415,6 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
       });
 
       const text = response.text;
-      const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-      if (chunks) {
-        setSources(chunks);
-      }
-
       if (text) {
         setStats(prev => ({ ...prev, lastUpdated: new Date().toLocaleTimeString('ko-KR') }));
       }
@@ -469,29 +493,6 @@ const LiveDashboard: React.FC<{ primaryColor: string }> = ({ primaryColor }) => 
                   </div>
                 </div>
               </div>
-
-              {sources.length > 0 && (
-                <div className="max-w-4xl mx-auto p-4 md:p-8 rounded-[1.5rem] border border-white/10 bg-white/5 backdrop-blur-md">
-                  <h4 className="text-[10px] md:text-xs font-black uppercase tracking-widest text-violet-400 mb-4 flex items-center gap-2">
-                    <ExternalLink size={12} /> 데이터 출처 및 검색 결과
-                  </h4>
-                  <div className="flex flex-wrap gap-2 md:gap-3">
-                    {sources.map((chunk, idx) => (
-                      chunk.web && (
-                        <a 
-                          key={idx} 
-                          href={chunk.web.uri} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="px-3 py-1.5 bg-black/40 border border-white/5 rounded-full text-[10px] md:text-xs text-gray-400 hover:text-white hover:border-violet-500/50 transition-all flex items-center gap-1.5"
-                        >
-                          {chunk.web.title || '출처 확인'}
-                        </a>
-                      )
-                    ))}
-                  </div>
-                </div>
-              )}
 
               <div className="max-w-4xl mx-auto space-y-6 md:space-y-16">
                 {CORE_HOOKS.map((hook, idx) => (
@@ -656,7 +657,6 @@ const App: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [references, setReferences] = useState<VideoReference[]>([]);
 
-  // 세션 체크 (새로고침 전까지 로그인 유지)
   useEffect(() => {
     const adminSession = sessionStorage.getItem('entervibe_admin');
     if (adminSession === 'true') {
@@ -788,11 +788,15 @@ const App: React.FC = () => {
           <div className="space-y-24">
             <div>
               <div className="px-6 md:px-24 flex items-center gap-3 mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-2xl font-black">숏폼 마케팅</h3></div>
-              <HorizontalScrollContainer>{references.filter(r => r.type === 'Short-form').map(video => <VideoCard key={video.id} video={video} isShort />)}</HorizontalScrollContainer>
+              <HorizontalScrollContainer>
+                {references.filter(r => r.type === 'Short-form').map(video => <VideoCard key={video.id} video={video} isShort />)}
+              </HorizontalScrollContainer>
             </div>
             <div>
               <div className="px-6 md:px-24 flex items-center gap-3 mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-2xl font-black">롱폼 기획 제작</h3></div>
-              <HorizontalScrollContainer>{references.filter(r => r.type === 'Long-form').map(video => <VideoCard key={video.id} video={video} />)}</HorizontalScrollContainer>
+              <HorizontalScrollContainer>
+                {references.filter(r => r.type === 'Long-form').map(video => <VideoCard key={video.id} video={video} />)}
+              </HorizontalScrollContainer>
             </div>
           </div>
         </section>
