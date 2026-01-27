@@ -204,19 +204,28 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
 
     setIsSyncing(true);
     localStorage.setItem('gh_token', ghToken);
-    localStorage.setItem('ghRepo', ghRepo);
-    localStorage.setItem('ghPath', ghPath);
+    localStorage.setItem('gh_repo', ghRepo);
+    localStorage.setItem('gh_path', ghPath);
 
     try {
+      // 1. Get current file content from GitHub
       const getRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghPath}`, {
         headers: { Authorization: `token ${ghToken}` }
       });
       
-      if (!getRes.ok) throw new Error('파일을 찾을 수 없습니다. 경로와 저장소명을 확인하세요.');
+      if (!getRes.ok) throw new Error('파일을 찾을 수 없습니다. 저장소와 경로를 확인해 주세요.');
       const fileData = await getRes.json();
       const sha = fileData.sha;
-      const oldContent = atob(fileData.content);
 
+      // 2. Decode UTF-8 safely (atob alone breaks Korean characters)
+      const binaryString = atob(fileData.content.replace(/\s/g, ''));
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const oldContent = new TextDecoder().decode(bytes);
+
+      // 3. Replace the data block
       const newRefsCode = `export const INITIAL_REFERENCES: VideoReference[] = ${JSON.stringify(localRefs, null, 2)};`;
       const regex = /export const INITIAL_REFERENCES: VideoReference\[\] = \[[\s\S]*?\];/;
       
@@ -224,9 +233,19 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
       if (regex.test(oldContent)) {
         newContent = oldContent.replace(regex, newRefsCode);
       } else {
-        throw new Error('파일 내에서 INITIAL_REFERENCES 변수를 찾을 수 없습니다.');
+        throw new Error('파일 내에서 INITIAL_REFERENCES 블록을 찾을 수 없습니다. constants.ts 파일 구조가 올바른지 확인해 주세요.');
       }
 
+      // 4. Encode UTF-8 safely to Base64
+      const encoder = new TextEncoder();
+      const encodedData = encoder.encode(newContent);
+      let newBinary = "";
+      for (let i = 0; i < encodedData.byteLength; i++) {
+        newBinary += String.fromCharCode(encodedData[i]);
+      }
+      const base64Content = btoa(newBinary);
+
+      // 5. Update the file on GitHub
       const putRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghPath}`, {
         method: 'PUT',
         headers: { 
@@ -235,7 +254,7 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
         },
         body: JSON.stringify({
           message: 'Update references via Admin Dashboard',
-          content: btoa(unescape(encodeURIComponent(newContent))),
+          content: base64Content,
           sha: sha
         })
       });
