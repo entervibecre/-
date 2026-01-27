@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { 
   Video, BarChart3, Layout, Instagram, Youtube, MessageCircle, 
   Settings, ChevronRight, X, Plus, Trash2, Edit2, Check, Download,
-  Menu, Play, Lock, User, ChevronLeft, TrendingUp, Users, Award, AlertCircle, Loader2, ExternalLink, Image as ImageIcon, Upload, ArrowLeft, Zap, RefreshCw, PlusCircle, Save, LogOut, Eye, EyeOff, FileImage, ChevronUp, ChevronDown, Github, Globe, Copy
+  Menu, Play, Lock, User, ChevronLeft, TrendingUp, Users, Award, AlertCircle, Loader2, ExternalLink, Image as ImageIcon, Upload, ArrowLeft, Zap, RefreshCw, PlusCircle, Save, LogOut, Eye, EyeOff, FileImage, ChevronUp, ChevronDown, Github, Globe, Copy, CreditCard, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { GoogleGenAI } from "@google/genai";
@@ -208,7 +208,6 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
     localStorage.setItem('gh_path', ghPath);
 
     try {
-      // 1. Get current file data to get SHA
       const getRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghPath}`, {
         headers: { Authorization: `token ${ghToken}` }
       });
@@ -218,7 +217,6 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
       const sha = fileData.sha;
       const oldContent = atob(fileData.content);
 
-      // 2. Replace INITIAL_REFERENCES block using Regex
       const newRefsCode = `export const INITIAL_REFERENCES: VideoReference[] = ${JSON.stringify(localRefs, null, 2)};`;
       const regex = /export const INITIAL_REFERENCES: VideoReference\[\] = \[[\s\S]*?\];/;
       
@@ -226,11 +224,9 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
       if (regex.test(oldContent)) {
         newContent = oldContent.replace(regex, newRefsCode);
       } else {
-        // If regex fails, append or handle error
         throw new Error('파일 내에서 INITIAL_REFERENCES 변수를 찾을 수 없습니다.');
       }
 
-      // 3. Update file on GitHub
       const putRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghPath}`, {
         method: 'PUT',
         headers: { 
@@ -280,7 +276,6 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
           </div>
         </div>
 
-        {/* Tabs Interface */}
         <div className="flex border-b border-white/5 bg-black/10">
           <button onClick={() => setActiveTab('Short-form')} className={`flex-1 py-4 text-sm font-black transition-all border-b-2 ${activeTab === 'Short-form' ? 'text-violet-500 border-violet-500 bg-violet-500/5' : 'text-gray-500 border-transparent hover:text-gray-300'}`}>숏폼 관리</button>
           <button onClick={() => setActiveTab('Long-form')} className={`flex-1 py-4 text-sm font-black transition-all border-b-2 ${activeTab === 'Long-form' ? 'text-violet-500 border-violet-500 bg-violet-500/5' : 'text-gray-500 border-transparent hover:text-gray-300'}`}>롱폼 관리</button>
@@ -431,10 +426,10 @@ const InquiryForm: React.FC<InquiryFormProps> = ({ onSubmit }) => {
       </div>
       <div className="space-y-4">
         <label className="text-sm font-black text-gray-400 uppercase tracking-widest leading-[1.6]">상담 요청 내용 (필수)</label>
-        <textarea required name="message" value={form.message} onChange={e => setForm({...form, message: e.target.value})} rows={6} className="w-full bg-zinc-950 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all font-bold leading-[2.4] break-keep shadow-inner" placeholder="무료 숏폼 광고 이벤트를 통해 제작하고 싶은 영상의 주제나 채널 성격 등을 적어주세요." />
+        <textarea required name="message" value={form.message} onChange={e => setForm({...form, message: e.target.value})} rows={6} className="w-full bg-zinc-950 border border-white/10 rounded-2xl p-6 text-lg focus:border-violet-500 outline-none transition-all font-bold leading-[2.4] break-keep shadow-inner" placeholder="50% 할인가로 숏폼 광고 이벤트를 통해 제작하고 싶은 영상의 주제나 채널 성격 등을 적어주세요." />
       </div>
       <button disabled={isSent || isSubmitting} className={`w-full py-6 md:py-10 rounded-[2rem] font-black text-xl md:text-2xl flex items-center justify-center gap-4 transition-all shadow-xl active:scale-95 break-keep ${isSent ? 'bg-green-600 scale-95 opacity-80' : 'bg-violet-600 hover:bg-violet-700 shadow-violet-600/30'} ${isSubmitting ? 'opacity-70 cursor-wait' : ''}`}>
-        {isSubmitting ? <><Loader2 size={32} className="animate-spin" /> 전송 중...</> : isSent ? <><Check size={32} /> 신청 완료되었습니다</> : '무료 숏폼 광고 신청하기'}
+        {isSubmitting ? <><Loader2 size={32} className="animate-spin" /> 전송 중...</> : isSent ? <><Check size={32} /> 신청 완료되었습니다</> : '50% 할인가로 숏폼 광고 신청하기'}
       </button>
     </form>
   );
@@ -630,9 +625,92 @@ const App: React.FC = () => {
         <div className="flex items-center gap-6"><button onClick={() => setIsConsultationPageOpen(true)} className="px-5 py-2 rounded-full bg-violet-600 hover:bg-violet-700 text-sm font-black transition-all">상담하기</button></div>
       </nav>
       <main className="relative z-10">
-        <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20 relative"><motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="max-w-5xl"><h1 className="text-5xl md:text-[8vw] font-black tracking-tighter mb-8 leading-normal bg-clip-text text-transparent bg-gradient-to-b from-white to-white/30 pr-8 overflow-visible">{settings.heroTitle}</h1><div className="space-y-6 mb-12"><p className="text-xl md:text-4xl font-bold tracking-tight text-white/40 leading-relaxed">당신의 비전을 현실로</p><p className="text-xl md:text-4xl font-bold tracking-tight text-white leading-relaxed">압도적인 유튜브 성장의 파트너</p></div><a href="#section-2" className="group relative inline-flex items-center gap-3 px-10 py-6 rounded-full bg-white text-black font-black text-lg hover:scale-105 transition-all shadow-xl"><span>무료 숏폼 광고 신청하기</span><ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" /></a></motion.div></section>
+        <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20 relative"><motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="max-w-5xl"><h1 className="text-5xl md:text-[8vw] font-black tracking-tighter mb-8 leading-normal bg-clip-text text-transparent bg-gradient-to-b from-white to-white/30 pr-8 overflow-visible">{settings.heroTitle}</h1><div className="space-y-6 mb-12"><p className="text-xl md:text-4xl font-bold tracking-tight text-white/40 leading-relaxed">당신의 비전을 현실로</p><p className="text-xl md:text-4xl font-bold tracking-tight text-white leading-relaxed">압도적인 유튜브 성장의 파트너</p></div><a href="#section-2" className="group relative inline-flex items-center gap-3 px-10 py-6 rounded-full bg-white text-black font-black text-lg hover:scale-105 transition-all shadow-xl"><span>50% 할인가로 숏폼 광고 신청하기</span><ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" /></a></motion.div></section>
+        
         <LiveDashboard primaryColor={settings.primaryColor} />
-        <section id="section-0" className="py-24 px-6 md:px-24 bg-transparent relative"><div className="max-w-6xl mx-auto"><motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20 text-center"><div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-sm font-black mb-6 shadow-sm"><Award size={18} /> 실전 데이터로 증명합니다</div><h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight md:leading-tight tracking-tighter text-center">단순한 대행이 아닌 실행사로서<br /><span style={{ color: settings.primaryColor }}>100여 개의 채널</span>을<br />직접 운영하는<br />실전 전문가 집단</h2></motion.div><div className="grid md:grid-cols-3 gap-8">{INITIAL_SOLUTIONS.map((sol) => (<div key={sol.id} className="glass-panel p-10 rounded-[2rem] hover:border-violet-500/30 transition-all duration-500"><h3 className="text-2xl font-black mb-4">{sol.title}</h3><p className="text-gray-400 leading-relaxed font-medium">{sol.description}</p></div>))}</div></div></section>
+        
+        <section id="section-0" className="py-24 px-6 md:px-24 bg-transparent relative">
+          <div className="max-w-6xl mx-auto">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20 text-center">
+              <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-sm font-black mb-6 shadow-sm"><Award size={18} /> 실전 데이터로 증명합니다</div>
+              <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight md:leading-tight tracking-tighter text-center">단순한 대행이 아닌 실행사로서<br /><span style={{ color: settings.primaryColor }}>100여 개의 채널</span>을<br />직접 운영하는<br />실전 전문가 집단</h2>
+            </motion.div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {INITIAL_SOLUTIONS.map((sol) => (<div key={sol.id} className="glass-panel p-10 rounded-[2rem] hover:border-violet-500/30 transition-all duration-500"><h3 className="text-2xl font-black mb-4">{sol.title}</h3><p className="text-gray-400 leading-relaxed font-medium">{sol.description}</p></div>))}
+            </div>
+          </div>
+        </section>
+
+        {/* --- Pricing Section --- */}
+        <section className="py-24 px-6 md:px-24 bg-transparent relative overflow-hidden">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16 md:mb-24">
+              <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tighter italic">Service Pricing Plan</h2>
+              <p className="text-gray-500 text-sm md:text-xl font-bold uppercase tracking-[0.3em] opacity-60">합리적인 비용으로 압도적인 성과를 경험하세요</p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+              <motion.div 
+                whileHover={{ y: -10 }}
+                className="glass-panel p-10 md:p-16 rounded-[3rem] border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent relative group overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 transition-opacity">
+                  <Video size={80} className="text-violet-500" />
+                </div>
+                <div className="relative z-10">
+                  <div className="inline-block px-4 py-1.5 rounded-full bg-violet-600/20 text-violet-400 text-[10px] font-black uppercase tracking-widest mb-8">Short-form Basic</div>
+                  <h3 className="text-3xl md:text-4xl font-black mb-4">숏폼 광고 단건 제작 및 홍보</h3>
+                  <p className="text-gray-500 font-medium mb-12 text-sm md:text-base break-keep">정밀한 타겟팅과 알고리즘 분석이 적용된 고효율 숏폼 콘텐츠 1건을 제작합니다.</p>
+                  
+                  <div className="flex items-baseline gap-2 mb-12">
+                    <span className="text-5xl md:text-7xl font-black text-white italic">15만원</span>
+                    <span className="text-lg md:text-xl font-bold text-gray-400">/ 1건</span>
+                  </div>
+                  
+                  <ul className="space-y-4 mb-12">
+                    {['전문 PD 1:1 기획 매칭', '알고리즘 최적화 편집', '저작권 프리 음원 사용'].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm font-bold text-gray-400">
+                        <Check size={16} className="text-violet-500" /> {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                whileHover={{ y: -10 }}
+                className="glass-panel p-10 md:p-16 rounded-[3rem] border-violet-500/30 bg-violet-500/5 relative group overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 p-8 opacity-20">
+                  <Sparkles size={80} className="text-violet-400" />
+                </div>
+                <div className="relative z-10">
+                  <div className="inline-block px-4 py-1.5 rounded-full bg-violet-500 text-white text-[10px] font-black uppercase tracking-widest mb-8">Premium Full-Package</div>
+                  <h3 className="text-3xl md:text-4xl font-black mb-4">채널 성장 올인원 패키지</h3>
+                  <p className="text-gray-500 font-medium mb-12 text-sm md:text-base break-keep">기획부터 촬영, 업로드, 채널 관리까지 전 과정을 대행하는 전문가 밀착 케어 서비스입니다.</p>
+                  
+                  <div className="flex items-baseline gap-2 mb-12">
+                    <span className="text-5xl md:text-7xl font-black text-white italic">199만원</span>
+                    <span className="text-lg md:text-xl font-bold text-gray-400">/ Month</span>
+                  </div>
+                  
+                  <ul className="space-y-4 mb-12">
+                    {['월 10~15개 숏폼 정기 제작 or 롱폼 8개 제작', '채널 운영 및 댓글 관리 대행', '주간 데이터 분석 리포트 제공', '광고 캠페인 전략 수립'].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm font-bold text-white/80">
+                        <Zap size={16} className="text-violet-400" /> {item}
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-[11px] font-black text-violet-400 uppercase tracking-tighter text-center">
+                    현재 가장 많은 업체가 선택 중인 베스트 플랜
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
         <section id="section-1" className="py-24 bg-transparent overflow-hidden text-left relative">
           <div className="px-6 md:px-24 mb-12 flex items-center justify-between gap-4"><div className="flex items-center gap-4"><h2 className="text-3xl md:text-5xl font-black tracking-tighter italic">레퍼런스</h2><div className="hidden md:block w-32 h-px bg-white/5" /></div><button onClick={handleOpenAdmin} className={`p-2 md:p-3 rounded-full border transition-all flex items-center gap-2 ${isAdmin ? 'bg-violet-600/20 border-violet-500 text-violet-400' : 'bg-white/5 border-white/10 text-gray-500 hover:text-white hover:bg-white/10'}`}>{isAdmin ? <Lock size={20} /> : <Settings size={20} />}<span className="hidden md:inline text-xs font-bold">{isAdmin ? '관리중' : '관리'}</span></button></div>
           <div className="space-y-24">
@@ -640,9 +718,12 @@ const App: React.FC = () => {
             <div><div className="px-6 md:px-24 flex items-center gap-3 mb-10"><div className="w-8 h-1 bg-violet-500 rounded-full" /><h3 className="text-2xl font-black">롱폼 기획 제작</h3></div><HorizontalScrollContainer>{references.filter(r => r.type === 'Long-form').map(video => <VideoCard key={video.id} video={video} />)}</HorizontalScrollContainer></div>
           </div>
         </section>
-        <section id="section-2" className="py-24 px-6 md:px-24 bg-transparent relative"><div className="max-w-4xl mx-auto text-center"><div className="mb-20"><span className="inline-block px-5 py-1.5 rounded-full bg-violet-500 text-white text-xs font-black mb-6 tracking-widest uppercase">limited event</span><h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tighter">무료 숏폼 광고 요청하기</h2><p className="text-lg text-gray-500 font-medium">선착순 혜택이 곧 종료됩니다. 지금 바로 무료 진단을 예약하세요.</p></div><InquiryForm onSubmit={saveInquiry} /></div></section>
+
+        <section id="section-2" className="py-24 px-6 md:px-24 bg-transparent relative"><div className="max-w-4xl mx-auto text-center"><div className="mb-20"><span className="inline-block px-5 py-1.5 rounded-full bg-violet-500 text-white text-xs font-black mb-6 tracking-widest uppercase">limited event</span><h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tighter">50% 할인가로 숏폼 광고 요청하기</h2><p className="text-lg text-gray-500 font-medium">선착순 혜택이 곧 종료됩니다. 지금 바로 무료 진단을 예약하세요.</p></div><InquiryForm onSubmit={saveInquiry} /></div></section>
+        
         <footer className="py-20 border-t border-white/5 px-6 md:px-24 text-center"><div className="text-2xl font-black mb-8 text-violet-500 opacity-40">{settings.agencyName}</div><div className="text-xs text-gray-800 font-medium space-y-2"><p>주식회사 마켓꾸 / 사업자등록번호 373-87-03959 / 대표자 유승용 / 서울특별시 용산구 서빙고로 17</p><p>© 2024 ENTERVIBECRE. ALL RIGHTS RESERVED.</p></div></footer>
       </main>
+      
       <AnimatePresence>
         {isConsultationPageOpen && <ConsultationPage onClose={() => setIsConsultationPageOpen(false)} onSubmit={saveInquiry} />}
         {isLoginModalOpen && <AdminLoginModal onLoginSuccess={handleLoginSuccess} onClose={() => setIsLoginModalOpen(false)} />}
