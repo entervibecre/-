@@ -129,7 +129,7 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
   const addReference = () => {
     const newRef: VideoReference = {
       id: `ref_${Date.now()}`,
-      type: activeTab === 'Sync' ? 'Short-form' : activeTab,
+      type: activeTab === 'Sync' ? 'Short-form' : (activeTab as any),
       title: '새로운 영상 제목',
       embedUrl: '',
       thumbnail: ''
@@ -196,6 +196,27 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
     alert('소스코드가 복사되었습니다. constants.ts 파일에 붙여넣으세요.');
   };
 
+  // 한글 깨짐 방지를 위한 핵심 UTF-8 Base64 변환 함수
+  const utf8ToBase64 = (str: string) => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str);
+    let binary = "";
+    for (let i = 0; i < data.byteLength; i++) {
+      binary += String.fromCharCode(data[i]);
+    }
+    return btoa(binary);
+  };
+
+  const base64ToUtf8 = (base64: string) => {
+    const binary = atob(base64.replace(/\s/g, ''));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const decoder = new TextDecoder();
+    return decoder.decode(bytes);
+  };
+
   const syncToGithub = async () => {
     if (!ghToken || !ghRepo || !ghPath) {
       alert('GitHub 설정을 모두 입력해주세요.');
@@ -208,7 +229,6 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
     localStorage.setItem('gh_path', ghPath);
 
     try {
-      // 1. Get current file content from GitHub
       const getRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghPath}`, {
         headers: { Authorization: `token ${ghToken}` }
       });
@@ -216,36 +236,19 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
       if (!getRes.ok) throw new Error('파일을 찾을 수 없습니다. 저장소와 경로를 확인해 주세요.');
       const fileData = await getRes.json();
       const sha = fileData.sha;
+      const oldContent = base64ToUtf8(fileData.content);
 
-      // 2. Decode UTF-8 safely (atob alone breaks Korean characters)
-      const binaryString = atob(fileData.content.replace(/\s/g, ''));
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      const oldContent = new TextDecoder().decode(bytes);
-
-      // 3. Replace the data block
       const newRefsCode = `export const INITIAL_REFERENCES: VideoReference[] = ${JSON.stringify(localRefs, null, 2)};`;
+      // INITIAL_REFERENCES 블록만 정확히 찾아서 교체
       const regex = /export const INITIAL_REFERENCES: VideoReference\[\] = \[[\s\S]*?\];/;
       
       let newContent;
       if (regex.test(oldContent)) {
         newContent = oldContent.replace(regex, newRefsCode);
       } else {
-        throw new Error('파일 내에서 INITIAL_REFERENCES 블록을 찾을 수 없습니다. constants.ts 파일 구조가 올바른지 확인해 주세요.');
+        throw new Error('파일 내에서 INITIAL_REFERENCES 변수를 찾을 수 없습니다.');
       }
 
-      // 4. Encode UTF-8 safely to Base64
-      const encoder = new TextEncoder();
-      const encodedData = encoder.encode(newContent);
-      let newBinary = "";
-      for (let i = 0; i < encodedData.byteLength; i++) {
-        newBinary += String.fromCharCode(encodedData[i]);
-      }
-      const base64Content = btoa(newBinary);
-
-      // 5. Update the file on GitHub
       const putRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghPath}`, {
         method: 'PUT',
         headers: { 
@@ -253,8 +256,8 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          message: 'Update references via Admin Dashboard',
-          content: base64Content,
+          message: 'Update references via Admin Dashboard (UTF-8 Protected)',
+          content: utf8ToBase64(newContent),
           sha: sha
         })
       });
@@ -272,7 +275,7 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
     }
   };
 
-  const currentRefs = localRefs.filter(r => r.type === (activeTab === 'Sync' ? 'Short-form' : activeTab));
+  const currentRefs = localRefs.filter(r => r.type === (activeTab === 'Sync' ? 'Short-form' : (activeTab as any)));
 
   return (
     <motion.div 
@@ -309,7 +312,7 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
                   <Globe size={20} /> 전역 배포 안내
                 </h3>
                 <p className="text-gray-400 text-sm leading-relaxed break-keep">
-                  현재 브라우저에서 수정한 내용은 관리자님의 컴퓨터에만 저장됩니다. <b>모든 방문자에게 레퍼런스를 공개하려면</b> 아래 GitHub 설정을 완료하고 [GitHub에 즉시 업데이트]를 클릭하세요.
+                  현재 브라우저에서 수정한 내용은 관리자님의 컴퓨터에만 저장됩니다. <b>모든 방문자에게 레퍼런스를 공개하려면</b> 아래 GitHub 설정을 완료하고 [GitHub에 즉시 업데이트]를 클릭하세요. (한글 깨짐 보호 로직이 적용되어 있습니다)
                 </p>
               </div>
 
