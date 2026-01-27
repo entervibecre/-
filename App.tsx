@@ -204,8 +204,8 @@ const ReferenceManager: React.FC<ReferenceManagerProps> = ({ references, onSave,
 
     setIsSyncing(true);
     localStorage.setItem('gh_token', ghToken);
-    localStorage.setItem('gh_repo', ghRepo);
-    localStorage.setItem('gh_path', ghPath);
+    localStorage.setItem('ghRepo', ghRepo);
+    localStorage.setItem('ghPath', ghPath);
 
     try {
       const getRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${ghPath}`, {
