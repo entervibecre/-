@@ -712,7 +712,7 @@ const App: React.FC = () => {
                   <p className="text-gray-500 font-medium mb-12 text-sm md:text-base break-keep">기획부터 촬영, 업로드, 채널 관리까지 전 과정을 대행하는 전문가 밀착 케어 서비스입니다.</p>
                   
                   <div className="flex items-baseline gap-2 mb-12">
-                    <span className="text-5xl md:text-7xl font-black text-white italic">199만원</span>
+                    <span className="text-5xl md:text-7xl font-black text-white italic">499만원</span>
                     <span className="text-lg md:text-xl font-bold text-gray-400">/ Month</span>
                   </div>
                   
